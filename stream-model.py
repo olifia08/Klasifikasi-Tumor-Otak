@@ -274,11 +274,11 @@ if menu == "Home":
         classification_randomforest_df = pd.DataFrame(report_randomforest).transpose()
         st.markdown("### Classification Report")
         st.dataframe(classification_randomforest_df)    
+        
         # Plot confusion matrix
         st.markdown("### Confusion Matrix")
         plt.figure(figsize=(8, 6))
-        sns.heatmap(conf_matrix_randomforest, annot=True, fmt='d', cmap='Blues',
-                    xticklabels=['LGG', 'GBM'], yticklabels=['LGG', 'GBM'])
+        sns.heatmap(conf_matrix_randomforest, annot=True, fmt='d', cmap='Blues', xticklabels=['LGG', 'GBM'], yticklabels=['LGG', 'GBM'])
         plt.xlabel('Predicted Labels')
         plt.ylabel('True Labels')
         plt.title('Confusion Matrix (Random Forest)')
