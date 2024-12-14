@@ -104,11 +104,11 @@ if cgga_df is not None:
 
         # Terapkan normalisasi pada kolom 'Age_at_diagnosis'
     if 'Age_at_diagnosis' in normalisasi.columns:
-                normalisasi['Age_at_diagnosis'] = min_max_normalize(cgga_df['Age_at_diagnosis'])
+        normalisasi['Age_at_diagnosis'] = min_max_normalize(cgga_df['Age_at_diagnosis'])
     
-                st.dataframe(normalisasi)  # Tampilkan 10 data pertama
+        st.dataframe(normalisasi)  # Tampilkan 10 data pertama
     else:
-                st.warning("Kolom 'Age_at_diagnosis' tidak ditemukan dalam dataset.")
+        st.warning("Kolom 'Age_at_diagnosis' tidak ditemukan dalam dataset.")
         st.markdown("3. Outlier")
         x = normalisasi.drop('Grade', axis=1, errors='ignore')  # Pastikan Grade ada
         numerical_features = x.select_dtypes(include=['int64', 'float64'])
