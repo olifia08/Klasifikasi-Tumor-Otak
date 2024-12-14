@@ -155,82 +155,86 @@ if menu == "Home":
         y = data_bersih['Grade']
         X_train, X_test, y_train, y_test = ms.train_test_split(X, y, test_size=0.20, random_state=0)
     
-    
-    
-        st.markdown("## Modelling Logistik Regression")
-    
+
+
+        st.markdown("## Modelling Logistic Regression")
+        
+        # Fungsi sigmoid
         def sigmoid(z):
             return 1 / (1 + np.exp(-z))
-    
+        
+        # Fungsi prediksi probabilitas
         def predict(X, weights):
             return sigmoid(np.dot(X, weights))
-    
+        
+        # Fungsi prediksi label
         def predict_labels(X, weights, threshold=0.5):
             probabilities = predict(X, weights)
             return (probabilities >= threshold).astype(int)
-    
+        
+        # Fungsi untuk memperbarui bobot
         def update_weights(X, y, weights, learning_rate):
-             for i in range(len(y)):
-                X_i = X[i].reshape(-1)
+            for i in range(len(y)):
+                X_i = X[i]
                 y_pred = predict(X_i, weights)
                 error = y_pred - y[i]
                 weights -= learning_rate * error * X_i
-                return weights
-    
+            return weights
+        
+        # Logistic regression menggunakan stochastic gradient descent
         def logistic_regression_sgd(X, y, learning_rate, epochs):
             np.random.seed(42)
             weights = np.random.rand(X.shape[1]) * 0.01
             for epoch in range(epochs):
                 weights = update_weights(X, y, weights, learning_rate)
-                accuracy = calculate_accuracy(X, y, weights)
-                return weights
-    
+            return weights
+        
+        # Fungsi untuk menghitung akurasi
         def calculate_accuracy(X, y, weights):
             y_pred = predict_labels(X, weights)
             accuracy = np.mean(y_pred == y)
             return accuracy
-    
-        # Split data
+        
+        # Memastikan data input ditambahkan bias (intercept)
         X_train = np.c_[np.ones((X_train.shape[0], 1)), X_train]
         X_test = np.c_[np.ones((X_test.shape[0], 1)), X_test]
-        y_train = np.ravel(np.array(y_train))
-        y_test = np.ravel(np.array(y_test))
+        y_train = np.ravel(y_train)
+        y_test = np.ravel(y_test)
         
         # Pelatihan model
         learning_rate = 0.1
         epochs = 50
         weights = logistic_regression_sgd(X_train, y_train, learning_rate, epochs)
-    
-        # Prediksi pada data uji
+        
+        # Evaluasi model
         y_pred_test = predict_labels(X_test, weights)
         conf_matrix = confusion_matrix(y_test, y_pred_test)
-    
-        # Akurasi model pada data pelatihan
         train_accuracy = calculate_accuracy(X_train, y_train, weights)
-    
+        
         # Mengganti label numerik dengan label teks
         label_mapping = {0: "LGG", 1: "GBM"}
         y_test_mapped = pd.Series(y_test).map(label_mapping)
         y_pred_test_mapped = pd.Series(y_pred_test).map(label_mapping)
-    
-        # Akurasi 
+        
+        # Menampilkan akurasi
         st.markdown(f"### Akurasi Model: {train_accuracy * 100:.2f}%")
-        # Menampilkan 10 sampel data klasifikasi dalam tabel
+        
+        # Menampilkan sampel hasil prediksi
         st.markdown("### Sampel Data Klasifikasi")
         classification_results = pd.DataFrame({
-            'True Label': y_test_mapped,               
+            'True Label': y_test_mapped,
             'Predicted Label': y_pred_test_mapped
         })
         sample_results = classification_results.sample(10)
-        st.dataframe(sample_results) # Menampilkan tabel hasil 10 sampel
-
-        # Classification report
+        st.dataframe(sample_results)
+        
+        # Menampilkan laporan klasifikasi
         st.markdown("### Classification Report")
         report = classification_report(y_test, y_pred_test, target_names=['LGG', 'GBM'], output_dict=True)
         classification_df = pd.DataFrame(report).transpose()
         st.dataframe(classification_df)
-    
-        # Plot confusion matrix
+        
+        # Menampilkan confusion matrix
         st.markdown("### Confusion Matrix")
         plt_lg = plt.figure(figsize=(8, 6))
         sns.heatmap(conf_matrix, annot=True, fmt='d', cmap='Blues', xticklabels=['LGG', 'GBM'], yticklabels=['LGG', 'GBM'])
@@ -238,8 +242,7 @@ if menu == "Home":
         plt.ylabel('True Labels')
         plt.title('Confusion Matrix')
         st.pyplot(plt_lg)
-    
-    
+
     
     
     
