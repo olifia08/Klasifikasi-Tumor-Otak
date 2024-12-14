@@ -16,8 +16,8 @@ from sklearn.metrics import accuracy_score, classification_report, confusion_mat
 # Path absolut ke file model dan dataset
 # model_path = r"D:\UTM Teknik Informatika\Semester 5\PSD\UAS\PSD_Olif\Deploy\model_logistikregression.sav"
 # dataset_path = r"D:\UTM Teknik Informatika\Semester 5\PSD\UAS\PSD_Olif\Deploy\TCGA_InfoWithGrade.csv"
-model_path = os.path.join("Deploy", "model_logistikregression.sav")
-dataset_path = os.path.join("Deploy", "TCGA_InfoWithGrade.csv")
+model_path = os.path.join("model_logistikregression.sav")
+dataset_path = os.path.join("TCGA_InfoWithGrade.csv")
 
 # Membaca model
 try:
