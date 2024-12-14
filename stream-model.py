@@ -336,71 +336,68 @@ if menu == "Home":
             plt.title('Confusion Matrix (KNN)')
             st.pyplot(plt_knn)
     
-            except Exception as e:
-                st.error(f"Terjadi kesalahan: {e}")
+        except Exception as e:
+            st.error(f"Terjadi kesalahan: {e}")
     
     
-            st.markdown("## Perbandingan 3 Metode")
-    
-            # Membuat DataFrame untuk menyimpan hasil model
-            models = pd.DataFrame({
-                'Model': ['Logistic Regression', 'Random Forest Classifier', 'KNN Classifier'],
-                'Score': [train_accuracy, score_randomforest, score_knn]
-            })
-    
-            # Mengurutkan berdasarkan nilai akurasi dari yang tertinggi ke terendah
-            models_sorted = models.sort_values(by='Score', ascending=False)
-    
-            # Plot perbandingan skor menggunakan Seaborn
-            st.markdown("### Grafik Perbandingan Akurasi")
-            plt.figure(figsize=(8, 6))
-            sns.barplot(x='Score', y='Model', data=models_sorted, palette='viridis')
-            plt.xlabel('Accuracy Score')
-            plt.ylabel('Model')
-            plt.title('Comparison of Model Accuracy')
-            st.pyplot(plt)
-    
-            if 'LGG' in classification_df.index and 'GBM' in classification_df.index:
-                precision_avg = (classification_df.loc['LGG', 'precision'] + classification_df.loc['GBM', 'precision']) / 2
-                recall_avg = (classification_df.loc['LGG', 'recall'] + classification_df.loc['GBM', 'recall']) / 2
-                f1_score_avg = (classification_df.loc['LGG', 'f1-score'] + classification_df.loc['GBM', 'f1-score']) / 2
-            else:
-                st.error("Label LGG atau GBM tidak ditemukan di classification_df.")
-                precision_avg, recall_avg, f1_score_avg = 0, 0, 0
-            
+        st.markdown("## Perbandingan 3 Metode")
+        
+         # Membuat DataFrame untuk menyimpan hasil model
+        models = pd.DataFrame({
+            'Model': ['Logistic Regression', 'Random Forest Classifier', 'KNN Classifier'],               
+            'Score': [train_accuracy, score_randomforest, score_knn]
+         })
+         # Mengurutkan berdasarkan nilai akurasi dari yang tertinggi ke terendah
+        models_sorted = models.sort_values(by='Score', ascending=False)
+        # Plot perbandingan skor menggunakan Seaborn
+        st.markdown("### Grafik Perbandingan Akurasi")
+        plt.figure(figsize=(8, 6))
+        sns.barplot(x='Score', y='Model', data=models_sorted, palette='viridis')
+        plt.xlabel('Accuracy Score')
+        plt.ylabel('Model')
+        plt.title('Comparison of Model Accuracy')
+        st.pyplot(plt)
+
+        if 'LGG' in classification_df.index and 'GBM' in classification_df.index:
+            precision_avg = (classification_df.loc['LGG', 'precision'] + classification_df.loc['GBM', 'precision']) / 2
+            recall_avg = (classification_df.loc['LGG', 'recall'] + classification_df.loc['GBM', 'recall']) / 2
+            f1_score_avg = (classification_df.loc['LGG', 'f1-score'] + classification_df.loc['GBM', 'f1-score']) / 2
+        else:
+            st.error("Label LGG atau GBM tidak ditemukan di classification_df.")
+            precision_avg, recall_avg, f1_score_avg = 0, 0, 0
+        
             # Simpan hasil ke DataFrame perbandingan
-            metrics_df = pd.DataFrame({
-                'Model': ['Logistic Regression', 'Random Forest', 'KNN'],
-                'Precision': [
-                    precision_avg,
-                    (report_randomforest['LGG']['precision'] + report_randomforest['GBM']['precision']) / 2,
-                    (report_knn['LGG']['precision'] + report_knn['GBM']['precision']) / 2
-                ],
-                'Recall': [
-                    recall_avg,
-                    (report_randomforest['LGG']['recall'] + report_randomforest['GBM']['recall']) / 2,
-                    (report_knn['LGG']['recall'] + report_knn['GBM']['recall']) / 2
-                ],
-                'F1-Score': [
-                    f1_score_avg,
-                    (report_randomforest['LGG']['f1-score'] + report_randomforest['GBM']['f1-score']) / 2,
-                    (report_knn['LGG']['f1-score'] + report_knn['GBM']['f1-score']) / 2
-                ]
-            })
+        metrics_df = pd.DataFrame({
+            'Model': ['Logistic Regression', 'Random Forest', 'KNN'],
+            'Precision': [
+                precision_avg,
+                (report_randomforest['LGG']['precision'] + report_randomforest['GBM']['precision']) / 2,
+                (report_knn['LGG']['precision'] + report_knn['GBM']['precision']) / 2
+            ],
+            'Recall': [
+                recall_avg,
+                (report_randomforest['LGG']['recall'] + report_randomforest['GBM']['recall']) / 2,
+                (report_knn['LGG']['recall'] + report_knn['GBM']['recall']) / 2
+            ],
+            'F1-Score': [
+                f1_score_avg,
+                (report_randomforest['LGG']['f1-score'] + report_randomforest['GBM']['f1-score']) / 2,
+                (report_knn['LGG']['f1-score'] + report_knn['GBM']['f1-score']) / 2
+            ]
+        })    
     
-    
-            # Plot bar chart untuk perbandingan
-            st.markdown("### Grafik Perbandingan Precision, Recall, dan F1-Score")
-            metrics_melted = metrics_df.melt(id_vars='Model', var_name='Metric', value_name='Score')
-    
-            plt.figure(figsize=(10, 6))
-            sns.barplot(x='Metric', y='Score', hue='Model', data=metrics_melted, palette='viridis')
-            plt.title('Comparison of Precision, Recall, and F1-Score')
-            plt.ylabel('Score')
-            # plt.ylim(0, 1)  # Batas untuk nilai metrik
-            plt.xlabel('Metric')
-            plt.legend(title='Model')
-            st.pyplot(plt)
+         # Plot bar chart untuk perbandingan
+        st.markdown("### Grafik Perbandingan Precision, Recall, dan F1-Score")
+        metrics_melted = metrics_df.melt(id_vars='Model', var_name='Metric', value_name='Score')
+        
+        plt.figure(figsize=(10, 6))
+        sns.barplot(x='Metric', y='Score', hue='Model', data=metrics_melted, palette='viridis')
+        plt.title('Comparison of Precision, Recall, and F1-Score')
+        plt.ylabel('Score')
+        # plt.ylim(0, 1)  # Batas untuk nilai metrik          
+        plt.xlabel('Metric')
+        plt.legend(title='Model')
+        st.pyplot(plt)
     
     
     else:
