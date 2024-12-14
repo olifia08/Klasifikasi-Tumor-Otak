@@ -175,7 +175,7 @@ if menu == "Home":
                 y_pred = predict(X_i, weights)
                 error = y_pred - y[i]
                 weights -= learning_rate * error * X_i
-            return weights
+                return weights
     
         def logistic_regression_sgd(X, y, learning_rate, epochs):
             np.random.seed(42)
