@@ -101,60 +101,59 @@ if menu == "Home":
         
         # Salin dataset untuk normalisasi
         normalisasi = cgga_df.copy()
-    
-            # Terapkan normalisasi pada kolom 'Age_at_diagnosis'
+        
+        # Terapkan normalisasi pada kolom 'Age_at_diagnosis'
         if 'Age_at_diagnosis' in normalisasi.columns:
             normalisasi['Age_at_diagnosis'] = min_max_normalize(cgga_df['Age_at_diagnosis'])
-        
-            st.dataframe(normalisasi)  # Tampilkan 10 data pertama
+            st.dataframe(normalisasi)
         else:
             st.warning("Kolom 'Age_at_diagnosis' tidak ditemukan dalam dataset.")
-            st.markdown("3. Outlier")
-            x = normalisasi.drop('Grade', axis=1, errors='ignore')  # Pastikan Grade ada
-            numerical_features = x.select_dtypes(include=['int64', 'float64'])
-            categorical_features = x.select_dtypes(include=['object'])
     
-            # Terapkan LOF hanya pada fitur numerik
-            lof = LocalOutlierFactor(n_neighbors=10, contamination=0.15)
-            y_outlier = lof.fit_predict(numerical_features)
+        # Penanganan outlier
+        st.markdown("3. Outlier")
+        x = normalisasi.drop('Grade', axis=1, errors='ignore')  # Pastikan Grade ada
+        numerical_features = x.select_dtypes(include=['int64', 'float64'])
     
-            # Skor anomali
-            anomaly_scores = lof.negative_outlier_factor_
+        # Terapkan LOF hanya pada fitur numerik
+        lof = LocalOutlierFactor(n_neighbors=10, contamination=0.15)
+        y_outlier = lof.fit_predict(numerical_features)
     
-            # Tambahkan hasil prediksi dan skor ke dataset
-            normalisasi['LOF_Prediksi'] = y_outlier
-            normalisasi['LOF_Skor_Anomali'] = anomaly_scores
+        # Skor anomali
+        anomaly_scores = lof.negative_outlier_factor_
     
-            # Hapus data outlier (LOF_Prediksi = -1)
-            data_bersih = normalisasi[normalisasi['LOF_Prediksi'] != -1]
-            data_bersih = data_bersih.drop(['LOF_Prediksi', 'LOF_Skor_Anomali'], axis=1)
+        # Tambahkan hasil prediksi dan skor ke dataset
+        normalisasi['LOF_Prediksi'] = y_outlier
+        normalisasi['LOF_Skor_Anomali'] = anomaly_scores
     
-            # Visualisasi Outlier dan Data Bersih
-            fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))
+        # Hapus data outlier (LOF_Prediksi = -1)
+        data_bersih = normalisasi[normalisasi['LOF_Prediksi'] != -1]
+        data_bersih = data_bersih.drop(['LOF_Prediksi', 'LOF_Skor_Anomali'], axis=1)
     
-            # Grafik Outlier
-            ax1.scatter(np.arange(len(anomaly_scores)), anomaly_scores, c=y_outlier, cmap='coolwarm', marker='o')
-            ax1.axhline(0, color='black', linestyle='--')
-            ax1.set_title('Grafik Outlier (LOF)')
-            ax1.set_xlabel('Index Data')
-            ax1.set_ylabel('Skor Anomali')
+        # Visualisasi Outlier dan Data Bersih
+        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))
     
-            # Jumlah Data Bersih
-            data_bersih_count = data_bersih.shape[0]
-            ax2.pie([data_bersih_count, len(normalisasi) - data_bersih_count], labels=['Data Bersih', 'Outlier'], autopct='%1.1f%%', startangle=90)
-            ax2.set_title('Distribusi Data Bersih vs Outlier')
+        # Grafik Outlier
+        ax1.scatter(np.arange(len(anomaly_scores)), anomaly_scores, c=y_outlier, cmap='coolwarm', marker='o')
+        ax1.axhline(0, color='black', linestyle='--')
+        ax1.set_title('Grafik Outlier (LOF)')
+        ax1.set_xlabel('Index Data')
+        ax1.set_ylabel('Skor Anomali')
     
-            # Tampilkan Grafik di Streamlit
-            st.pyplot(fig)
-            st.dataframe(data_bersih)
+        # Jumlah Data Bersih
+        data_bersih_count = data_bersih.shape[0]
+        ax2.pie([data_bersih_count, len(normalisasi) - data_bersih_count], labels=['Data Bersih', 'Outlier'], autopct='%1.1f%%', startangle=90)
+        ax2.set_title('Distribusi Data Bersih vs Outlier')
     
+        # Tampilkan Grafik di Streamlit
+        st.pyplot(fig)
+        st.dataframe(data_bersih)
     
-            # Split Data
-            X= data_bersih[['Age_at_diagnosis', 'Gender', 'Race','IDH1','TP53','ATRX','PTEN','EGFR',
-                            'CIC','MUC16','PIK3CA','NF1','PIK3R1','FUBP1','RB1','NOTCH1','BCOR','CSMD3',
-                            'SMARCA4','GRIN2A','IDH2','FAT4','PDGFRA']]
-            y= data_bersih.Grade
-            X_train, X_test, y_train, y_test = ms.train_test_split(X, y, test_size=0.20, random_state=0)
+        # Split Data
+        X = data_bersih[['Age_at_diagnosis', 'Gender', 'Race', 'IDH1', 'TP53', 'ATRX', 'PTEN', 'EGFR',
+                         'CIC', 'MUC16', 'PIK3CA', 'NF1', 'PIK3R1', 'FUBP1', 'RB1', 'NOTCH1', 'BCOR', 'CSMD3',
+                         'SMARCA4', 'GRIN2A', 'IDH2', 'FAT4', 'PDGFRA']]
+        y = data_bersih['Grade']
+        X_train, X_test, y_train, y_test = ms.train_test_split(X, y, test_size=0.20, random_state=0)
     
     
     
