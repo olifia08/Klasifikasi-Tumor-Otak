@@ -157,38 +157,38 @@ if menu == "Home":
     
     
     
-            st.markdown("## Modelling Logistik Regression")
+        st.markdown("## Modelling Logistik Regression")
     
-            def sigmoid(z):
-                return 1 / (1 + np.exp(-z))
+        def sigmoid(z):
+            return 1 / (1 + np.exp(-z))
     
-            def predict(X, weights):
-                return sigmoid(np.dot(X, weights))
+        def predict(X, weights):
+            return sigmoid(np.dot(X, weights))
     
-            def predict_labels(X, weights, threshold=0.5):
-                probabilities = predict(X, weights)
-                return (probabilities >= threshold).astype(int)
+        def predict_labels(X, weights, threshold=0.5):
+            probabilities = predict(X, weights)
+            return (probabilities >= threshold).astype(int)
     
-            def update_weights(X, y, weights, learning_rate):
-                for i in range(len(y)):
-                    X_i = X[i].reshape(-1)
-                    y_pred = predict(X_i, weights)
-                    error = y_pred - y[i]
-                    weights -= learning_rate * error * X_i
-                return weights
+        def update_weights(X, y, weights, learning_rate):
+             for i in range(len(y)):
+                X_i = X[i].reshape(-1)
+                y_pred = predict(X_i, weights)
+                error = y_pred - y[i]
+                weights -= learning_rate * error * X_i
+            return weights
     
-            def logistic_regression_sgd(X, y, learning_rate, epochs):
-                np.random.seed(42)
-                weights = np.random.rand(X.shape[1]) * 0.01
-                for epoch in range(epochs):
-                    weights = update_weights(X, y, weights, learning_rate)
-                    accuracy = calculate_accuracy(X, y, weights)
-                return weights
+        def logistic_regression_sgd(X, y, learning_rate, epochs):
+            np.random.seed(42)
+            weights = np.random.rand(X.shape[1]) * 0.01
+            for epoch in range(epochs):
+                weights = update_weights(X, y, weights, learning_rate)
+                accuracy = calculate_accuracy(X, y, weights)
+            return weights
     
-            def calculate_accuracy(X, y, weights):
-                y_pred = predict_labels(X, weights)
-                accuracy = np.mean(y_pred == y)
-                return accuracy
+        def calculate_accuracy(X, y, weights):
+            y_pred = predict_labels(X, weights)
+            accuracy = np.mean(y_pred == y)
+            return accuracy
     
             # Split data
             X_train = np.c_[np.ones((X_train.shape[0], 1)), X_train]
