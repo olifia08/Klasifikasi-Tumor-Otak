@@ -197,7 +197,7 @@ if menu == "Home":
         y_test = np.ravel(np.array(y_test))
         
         # Pelatihan model
-        learning_rate = 0.01
+        learning_rate = 0.1
         epochs = 50
         weights = logistic_regression_sgd(X_train, y_train, learning_rate, epochs)
     
