@@ -60,35 +60,36 @@ if menu == "Home":
         """
     )
 
-    if cgga_df is not None:
-        st.markdown("## sampel Dataset")
-        st.dataframe(cgga_df)  # Menampilkan sampel 10 data
-        st.markdown ("## Informasi Dataset")
-        st.dataframe(cgga_df.describe())
-                # Path gambar
-        chart_age_path = "chart_age.png"
-        chart_grade_path = "chart_grade.png"
+   if cgga_df is not None:
+    st.markdown("## Sampel Dataset")
+    st.dataframe(cgga_df)  # Menampilkan sampel data
+    st.markdown("## Informasi Dataset")
+    st.dataframe(cgga_df.describe())
+    
+    # Path gambar
+    chart_age_path = "chart_age.png"
+    chart_grade_path = "chart_grade.png"
 
-        # Tampilkan gambar jika ada
-        st.markdown("### Penyebaran Data")
+    # Tampilkan gambar jika ada
+    st.markdown("### Penyebaran Data")
 
-        # Gambar distribusi usia
-        if os.path.exists(chart_age_path):
-            try:
-                st.image(chart_age_path, caption="Distribusi Usia", use_column_width=True)
-            except Exception as e:
-                st.warning(f"Gagal memuat gambar distribusi usia: {e}")
-        else:
-            st.warning("Gambar distribusi usia tidak tersedia.")
+    # Gambar distribusi usia
+    if os.path.exists(chart_age_path):
+        try:
+            st.image(chart_age_path, caption="Distribusi Usia", use_container_width=True)  # Ganti use_column_width
+        except Exception as e:
+            st.warning(f"Gagal memuat gambar distribusi usia: {e}")
+    else:
+        st.warning("Gambar distribusi usia tidak tersedia.")
 
-        # Gambar distribusi grade
-        if os.path.exists(chart_grade_path):
-            try:
-                st.image(chart_grade_path, caption="Distribusi Grade", use_column_width=True)
-            except Exception as e:
-                st.warning(f"Gagal memuat gambar distribusi grade: {e}")
-        else:
-            st.warning("Gambar distribusi grade tidak tersedia.")
+    # Gambar distribusi grade
+    if os.path.exists(chart_grade_path):
+        try:
+            st.image(chart_grade_path, caption="Distribusi Grade", use_container_width=True)  # Ganti use_column_width
+        except Exception as e:
+            st.warning(f"Gagal memuat gambar distribusi grade: {e}")
+    else:
+        st.warning("Gambar distribusi grade tidak tersedia.")
         st.markdown("## Preprocesing")
         st.markdown("1. Mendeteksi Missing Value")
         st.dataframe(cgga_df.isna().sum())
