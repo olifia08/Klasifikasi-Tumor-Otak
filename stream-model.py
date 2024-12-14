@@ -167,7 +167,7 @@ if menu == "Home":
     
         def predict_labels(X, weights, threshold=0.5):
             probabilities = predict(X, weights)
-            return (probabilities >= threshold).astype(int)
+        return (probabilities >= threshold).astype(int)
     
         def update_weights(X, y, weights, learning_rate):
              for i in range(len(y)):
@@ -175,7 +175,7 @@ if menu == "Home":
                 y_pred = predict(X_i, weights)
                 error = y_pred - y[i]
                 weights -= learning_rate * error * X_i
-            return weights
+        return weights
     
         def logistic_regression_sgd(X, y, learning_rate, epochs):
             np.random.seed(42)
@@ -183,7 +183,7 @@ if menu == "Home":
             for epoch in range(epochs):
                 weights = update_weights(X, y, weights, learning_rate)
                 accuracy = calculate_accuracy(X, y, weights)
-            return weights
+        return weights
     
         def calculate_accuracy(X, y, weights):
             y_pred = predict_labels(X, weights)
