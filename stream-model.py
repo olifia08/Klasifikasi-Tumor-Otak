@@ -60,7 +60,7 @@ if menu == "Home":
         """
     )
 
-   if cgga_df is not None:
+  if cgga_df is not None:
     st.markdown("## Sampel Dataset")
     st.dataframe(cgga_df)  # Menampilkan sampel data
     st.markdown("## Informasi Dataset")
@@ -90,14 +90,17 @@ if menu == "Home":
             st.warning(f"Gagal memuat gambar distribusi grade: {e}")
     else:
         st.warning("Gambar distribusi grade tidak tersedia.")
-        st.markdown("## Preprocesing")
-        st.markdown("1. Mendeteksi Missing Value")
-        st.dataframe(cgga_df.isna().sum())
-        st.markdown("2. Normalisasi Data")
-        def min_max_normalize(column):
-            return (column - column.min()) / (column.max() - column.min())
-        # Salin dataset untuk normalisasi
-        normalisasi = cgga_df.copy()
+    
+    st.markdown("## Preprocessing")
+    st.markdown("1. Mendeteksi Missing Value")
+    st.dataframe(cgga_df.isna().sum())
+    st.markdown("2. Normalisasi Data")
+    
+    def min_max_normalize(column):
+        return (column - column.min()) / (column.max() - column.min())
+    
+    # Salin dataset untuk normalisasi
+    normalisasi = cgga_df.copy()
 
         # Terapkan normalisasi pada kolom 'Age_at_diagnosis'
         if 'Age_at_diagnosis' in normalisasi.columns:
