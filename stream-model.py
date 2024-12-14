@@ -190,154 +190,151 @@ if menu == "Home":
             accuracy = np.mean(y_pred == y)
             return accuracy
     
-            # Split data
-            X_train = np.c_[np.ones((X_train.shape[0], 1)), X_train]
-            X_test = np.c_[np.ones((X_test.shape[0], 1)), X_test]
-            y_train = np.ravel(np.array(y_train))
-            y_test = np.ravel(np.array(y_test))
+        # Split data
+        X_train = np.c_[np.ones((X_train.shape[0], 1)), X_train]
+        X_test = np.c_[np.ones((X_test.shape[0], 1)), X_test]
+        y_train = np.ravel(np.array(y_train))
+        y_test = np.ravel(np.array(y_test))
+        
+        # Pelatihan model
+        learning_rate = 0.01
+        epochs = 50
+        weights = logistic_regression_sgd(X_train, y_train, learning_rate, epochs)
     
-            # Pelatihan model
-            learning_rate = 0.01
-            epochs = 50
-            weights = logistic_regression_sgd(X_train, y_train, learning_rate, epochs)
+        # Prediksi pada data uji
+        y_pred_test = predict_labels(X_test, weights)
+        conf_matrix = confusion_matrix(y_test, y_pred_test)
     
-            # Prediksi pada data uji
-            y_pred_test = predict_labels(X_test, weights)
-            conf_matrix = confusion_matrix(y_test, y_pred_test)
+        # Akurasi model pada data pelatihan
+        train_accuracy = calculate_accuracy(X_train, y_train, weights)
     
-            # Akurasi model pada data pelatihan
-            train_accuracy = calculate_accuracy(X_train, y_train, weights)
+        # Mengganti label numerik dengan label teks
+        label_mapping = {0: "LGG", 1: "GBM"}
+        y_test_mapped = pd.Series(y_test).map(label_mapping)
+        y_pred_test_mapped = pd.Series(y_pred_test).map(label_mapping)
     
-            # Mengganti label numerik dengan label teks
+        # Akurasi 
+        st.markdown(f"### Akurasi Model: {train_accuracy * 100:.2f}%")
+        # Menampilkan 10 sampel data klasifikasi dalam tabel
+        st.markdown("### Sampel Data Klasifikasi")
+        classification_results = pd.DataFrame({
+            'True Label': y_test_mapped,               
+            'Predicted Label': y_pred_test_mapped
+        })
+        sample_results = classification_results.sample(10)
+        st.dataframe(sample_results) # Menampilkan tabel hasil 10 sampel
+
+        # Classification report
+        st.markdown("### Classification Report")
+        report = classification_report(y_test, y_pred_test, target_names=['LGG', 'GBM'], output_dict=True)
+        classification_df = pd.DataFrame(report).transpose()
+        st.dataframe(classification_df)
+    
+        # Plot confusion matrix
+        st.markdown("### Confusion Matrix")
+        plt_lg = plt.figure(figsize=(8, 6))
+        sns.heatmap(conf_matrix, annot=True, fmt='d', cmap='Blues', xticklabels=['LGG', 'GBM'], yticklabels=['LGG', 'GBM'])
+        plt.xlabel('Predicted Labels')
+        plt.ylabel('True Labels')
+        plt.title('Confusion Matrix')
+        st.pyplot(plt_lg)
+    
+    
+    
+    
+    
+        # Modelling Random Forest
+        st.markdown("## Modelling Random Forest")
+        model = RandomForestClassifier(
+            n_estimators=100,
+            max_depth=None,
+            min_samples_split=2,
+            max_features=10
+        )
+        model.fit(X_train, y_train)
+        y_pred_randomforest = model.predict(X_test)
+        score_randomforest = model.score(X_test, y_test)
+        conf_matrix_randomforest = confusion_matrix(y_test, y_pred_randomforest)
+        # Ganti label 0 dengan "LGG" dan 1 dengan "GBM"
+        y_test_mapped = pd.Series(y_test).map(label_mapping)
+        y_pred_randomforest_mapped = pd.Series(y_pred_randomforest).map(label_mapping)    
+            # Akurasi
+        st.markdown(f"### Akurasi Model: {score_randomforest * 100:.2f}%")
+        # Menampilkan 10 sampel data klasifikasi dalam tabel
+        classification_randomforest_results = pd.DataFrame({                
+            'True Label': y_test_mapped,
+            'Predicted Label': y_pred_randomforest_mapped
+        })
+        sample_randomforest_results = classification_randomforest_results.sample(10)
+        st.markdown("### Sampel Hasil Prediksi")
+        st.dataframe(sample_randomforest_results)
+    
+        # Classification report
+        report_randomforest = classification_report(y_test, y_pred_randomforest, target_names=['LGG', 'GBM'], output_dict=True)            
+        classification_randomforest_df = pd.DataFrame(report_randomforest).transpose()
+        st.markdown("### Classification Report")
+        st.dataframe(classification_randomforest_df)    
+        # Plot confusion matrix
+        st.markdown("### Confusion Matrix")
+        plt.figure(figsize=(8, 6))
+        sns.heatmap(conf_matrix_randomforest, annot=True, fmt='d', cmap='Blues',
+                    xticklabels=['LGG', 'GBM'], yticklabels=['LGG', 'GBM'])
+        plt.xlabel('Predicted Labels')
+        plt.ylabel('True Labels')
+        plt.title('Confusion Matrix (Random Forest)')
+        st.pyplot(plt)
+    
+    
+    
+    
+    
+        st.markdown("## Modelling K-NN")
+    
+        try:
+            # Inisialisasi model K-NN
+            model_knn = KNeighborsClassifier(n_neighbors=10)
+            model_knn.fit(X_train, y_train)
+    
+            # Prediksi dan evaluasi
+            y_pred_knn = model_knn.predict(X_test)
+            score_knn = accuracy_score(y_test, y_pred_knn)
+            conf_matrix_knn = confusion_matrix(y_test, y_pred_knn)
+    
+            # Ganti label 0 dengan "LGG" dan 1 dengan "GBM"
             label_mapping = {0: "LGG", 1: "GBM"}
             y_test_mapped = pd.Series(y_test).map(label_mapping)
-            y_pred_test_mapped = pd.Series(y_pred_test).map(label_mapping)
+            y_pred_knn_mapped = pd.Series(y_pred_knn).map(label_mapping)
     
-            # Akurasi 
-            st.markdown(f"### Akurasi Model: {train_accuracy * 100:.2f}%")
+            # Akurasi K-NN
+            st.markdown(f"### Akurasi Model: {score_knn * 100:.2f}%")
             # Menampilkan 10 sampel data klasifikasi dalam tabel
-            st.markdown("### Sampel Data Klasifikasi")
-            classification_results = pd.DataFrame({
-                'True Label': y_test_mapped,
-                'Predicted Label': y_pred_test_mapped
+            st.markdown("#### Sampel Klasifikasi 10 Data")
+            classification_knn_results = pd.DataFrame({
+                'True Label': y_test_mapped,                    
+                'Predicted Label': y_pred_knn_mapped
             })
-            sample_results = classification_results.sample(10)
-            st.dataframe(sample_results) # Menampilkan tabel hasil 10 sampel
+    
+            # Penyesuaian jumlah sampel untuk dataset kecil
+            if len(classification_knn_results) > 0:
+                sample_knn_results = classification_knn_results.sample(min(10, len(classification_knn_results)))                    
+                st.dataframe(sample_knn_results)  # Menampilkan tabel hasil 10 sampel
+            else:
+                st.warning("Tidak ada data yang cukup untuk menampilkan sampel klasifikasi.")
     
             # Classification report
-            st.markdown("### Classification Report")
-            report = classification_report(y_test, y_pred_test, target_names=['LGG', 'GBM'], output_dict=True)
-            classification_df = pd.DataFrame(report).transpose()
-            st.dataframe(classification_df)
-    
+            st.markdown("#### Classification Report")
+            report_knn = classification_report(y_test, y_pred_knn, target_names=['LGG', 'GBM'], output_dict=True)
+            classification_knn_df = pd.DataFrame(report_knn).transpose()
+            st.dataframe(classification_knn_df)  # Menampilkan classification report dalam bentuk tabel
+
             # Plot confusion matrix
-            st.markdown("### Confusion Matrix")
-            plt_lg = plt.figure(figsize=(8, 6))
-            sns.heatmap(conf_matrix, annot=True, fmt='d', cmap='Blues', xticklabels=['LGG', 'GBM'], yticklabels=['LGG', 'GBM'])
+            st.markdown("#### Confusion Matrix (KNN)")
+            plt_knn = plt.figure(figsize=(8, 6))
+            sns.heatmap(conf_matrix_knn, annot=True, fmt='d', cmap='Blues', xticklabels=['LGG', 'GBM'], yticklabels=['LGG', 'GBM'])
             plt.xlabel('Predicted Labels')
             plt.ylabel('True Labels')
-            plt.title('Confusion Matrix')
-            st.pyplot(plt_lg)
-    
-    
-    
-    
-    
-            # Modelling Random Forest
-            st.markdown("## Modelling Random Forest")
-            model = RandomForestClassifier(
-                n_estimators=100,
-                max_depth=None,
-                min_samples_split=2,
-                max_features=10
-            )
-            model.fit(X_train, y_train)
-            y_pred_randomforest = model.predict(X_test)
-            score_randomforest = model.score(X_test, y_test)
-            conf_matrix_randomforest = confusion_matrix(y_test, y_pred_randomforest)
-            # Ganti label 0 dengan "LGG" dan 1 dengan "GBM"
-            y_test_mapped = pd.Series(y_test).map(label_mapping)
-            y_pred_randomforest_mapped = pd.Series(y_pred_randomforest).map(label_mapping)
-    
-            # Akurasi
-            st.markdown(f"### Akurasi Model: {score_randomforest * 100:.2f}%")
-            # Menampilkan 10 sampel data klasifikasi dalam tabel
-            classification_randomforest_results = pd.DataFrame({
-                'True Label': y_test_mapped,
-                'Predicted Label': y_pred_randomforest_mapped
-            })
-            sample_randomforest_results = classification_randomforest_results.sample(10)
-            st.markdown("### Sampel Hasil Prediksi")
-            st.dataframe(sample_randomforest_results)
-    
-            # Classification report
-            report_randomforest = classification_report(y_test, y_pred_randomforest, target_names=['LGG', 'GBM'], output_dict=True)
-            classification_randomforest_df = pd.DataFrame(report_randomforest).transpose()
-            st.markdown("### Classification Report")
-            st.dataframe(classification_randomforest_df)
-    
-            # Plot confusion matrix
-            st.markdown("### Confusion Matrix")
-            plt.figure(figsize=(8, 6))
-            sns.heatmap(conf_matrix_randomforest, annot=True, fmt='d', cmap='Blues',
-                        xticklabels=['LGG', 'GBM'], yticklabels=['LGG', 'GBM'])
-            plt.xlabel('Predicted Labels')
-            plt.ylabel('True Labels')
-            plt.title('Confusion Matrix (Random Forest)')
-            st.pyplot(plt)
-    
-    
-    
-    
-    
-            st.markdown("## Modelling K-NN")
-    
-            try:
-                # Inisialisasi model K-NN
-                model_knn = KNeighborsClassifier(n_neighbors=10)
-                model_knn.fit(X_train, y_train)
-    
-                # Prediksi dan evaluasi
-                y_pred_knn = model_knn.predict(X_test)
-                score_knn = accuracy_score(y_test, y_pred_knn)
-                conf_matrix_knn = confusion_matrix(y_test, y_pred_knn)
-    
-                # Ganti label 0 dengan "LGG" dan 1 dengan "GBM"
-                label_mapping = {0: "LGG", 1: "GBM"}
-                y_test_mapped = pd.Series(y_test).map(label_mapping)
-                y_pred_knn_mapped = pd.Series(y_pred_knn).map(label_mapping)
-    
-                # Akurasi K-NN
-                st.markdown(f"### Akurasi Model: {score_knn * 100:.2f}%")
-    
-                # Menampilkan 10 sampel data klasifikasi dalam tabel
-                st.markdown("#### Sampel Klasifikasi 10 Data")
-                classification_knn_results = pd.DataFrame({
-                    'True Label': y_test_mapped,
-                    'Predicted Label': y_pred_knn_mapped
-                })
-    
-                # Penyesuaian jumlah sampel untuk dataset kecil
-                if len(classification_knn_results) > 0:
-                    sample_knn_results = classification_knn_results.sample(min(10, len(classification_knn_results)))
-                    st.dataframe(sample_knn_results)  # Menampilkan tabel hasil 10 sampel
-                else:
-                    st.warning("Tidak ada data yang cukup untuk menampilkan sampel klasifikasi.")
-    
-                # Classification report
-                st.markdown("#### Classification Report")
-                report_knn = classification_report(y_test, y_pred_knn, target_names=['LGG', 'GBM'], output_dict=True)
-                classification_knn_df = pd.DataFrame(report_knn).transpose()
-                st.dataframe(classification_knn_df)  # Menampilkan classification report dalam bentuk tabel
-    
-                # Plot confusion matrix
-                st.markdown("#### Confusion Matrix (KNN)")
-                plt_knn = plt.figure(figsize=(8, 6))
-                sns.heatmap(conf_matrix_knn, annot=True, fmt='d', cmap='Blues', xticklabels=['LGG', 'GBM'], yticklabels=['LGG', 'GBM'])
-                plt.xlabel('Predicted Labels')
-                plt.ylabel('True Labels')
-                plt.title('Confusion Matrix (KNN)')
-                st.pyplot(plt_knn)
+            plt.title('Confusion Matrix (KNN)')
+            st.pyplot(plt_knn)
     
             except Exception as e:
                 st.error(f"Terjadi kesalahan: {e}")
