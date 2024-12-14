@@ -103,11 +103,11 @@ if cgga_df is not None:
     normalisasi = cgga_df.copy()
 
         # Terapkan normalisasi pada kolom 'Age_at_diagnosis'
-        if 'Age_at_diagnosis' in normalisasi.columns:
+    if 'Age_at_diagnosis' in normalisasi.columns:
                 normalisasi['Age_at_diagnosis'] = min_max_normalize(cgga_df['Age_at_diagnosis'])
     
                 st.dataframe(normalisasi)  # Tampilkan 10 data pertama
-        else:
+    else:
                 st.warning("Kolom 'Age_at_diagnosis' tidak ditemukan dalam dataset.")
         st.markdown("3. Outlier")
         x = normalisasi.drop('Grade', axis=1, errors='ignore')  # Pastikan Grade ada
