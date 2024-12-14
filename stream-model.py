@@ -167,7 +167,7 @@ if menu == "Home":
     
         def predict_labels(X, weights, threshold=0.5):
             probabilities = predict(X, weights)
-        return (probabilities >= threshold).astype(int)
+            return (probabilities >= threshold).astype(int)
     
         def update_weights(X, y, weights, learning_rate):
              for i in range(len(y)):
