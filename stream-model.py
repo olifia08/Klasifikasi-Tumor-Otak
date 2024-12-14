@@ -407,8 +407,8 @@ if cgga_df is not None:
         st.pyplot(plt)
 
 
-    else:
-        st.error("Dataset tidak tersedia untuk ditampilkan.")
+else:
+    st.error("Dataset tidak tersedia untuk ditampilkan.")
 # Tampilan Menu "Klasifikasi"
 elif menu == "Klasifikasi":
     st.title("Klasifikasi Glioma")
