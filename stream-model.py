@@ -60,7 +60,7 @@ if menu == "Home":
         """
     )
 
-  if cgga_df is not None:
+if cgga_df is not None:
     st.markdown("## Sampel Dataset")
     st.dataframe(cgga_df)  # Menampilkan sampel data
     st.markdown("## Informasi Dataset")
