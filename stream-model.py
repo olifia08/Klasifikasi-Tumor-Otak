@@ -183,7 +183,7 @@ if menu == "Home":
             for epoch in range(epochs):
                 weights = update_weights(X, y, weights, learning_rate)
                 accuracy = calculate_accuracy(X, y, weights)
-        return weights
+                return weights
     
         def calculate_accuracy(X, y, weights):
             y_pred = predict_labels(X, weights)
