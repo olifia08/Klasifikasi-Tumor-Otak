@@ -66,8 +66,8 @@ if menu == "Home":
         st.markdown ("## Informasi Dataset")
         st.dataframe(cgga_df.describe())
                 # Path gambar
-        chart_age_path = r"chart_age.png"
-        chart_grade_path = r"chart_grade.png"
+        chart_age_path = "chart_age.png"
+        chart_grade_path = "chart_grade.png"
 
         # Tampilkan gambar jika ada
         st.markdown("### Penyebaran Data")
