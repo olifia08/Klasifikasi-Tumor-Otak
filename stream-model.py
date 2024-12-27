@@ -155,7 +155,7 @@ elif menu == "Preprocesing":
             st.pyplot(fig)
             st.dataframe(data_bersih)
         else:
-        st.error("Dataset tidak ditemukan untuk preprocessing!")
+            st.error("Dataset tidak ditemukan untuk preprocessing!")
 
 elif menu == "Split Data":
         st.title("Pembagian Data")
