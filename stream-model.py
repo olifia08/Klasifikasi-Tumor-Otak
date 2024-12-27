@@ -91,14 +91,14 @@ if menu == "Home":
         else:
             st.warning("Gambar distribusi grade tidak tersedia.")
             
-        if cgga_df is not None:
-            st.dataframe(cgga_df.head())  # Menampilkan sampel dataset
-        else:
-            st.error("Dataset tidak ditemukan!")
+        # if cgga_df is not None:
+        #     st.dataframe(cgga_df.head())  # Menampilkan sampel dataset
+        # else:
+        #     st.error("Dataset tidak ditemukan!")
             
 elif menu == "Preprocesing":  
         if cgga_df is not None:
-            st.title("## Preprocessing")
+            st.title(" Preprocessing")
             st.markdown("1. Mendeteksi Missing Value")
             st.dataframe(cgga_df.isna().sum())
             st.markdown("2. Normalisasi Data")
