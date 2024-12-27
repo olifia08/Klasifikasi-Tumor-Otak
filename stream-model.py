@@ -30,7 +30,7 @@ except FileNotFoundError:
 # Sidebar menu
 menu = st.sidebar.selectbox(
     "Main Menu",
-    options=["Home", "Preprocesing", "Logistik Regression", "Random Forest","KNN","Klasifikasi","Perbandingan 3 Metode"],
+    options=["Home", "Preprocesing", "Logistik Regression", "Random Forest","KNN","Perbandingan 3 Metode","Klasifikasi",],
     index=0
 )
 
