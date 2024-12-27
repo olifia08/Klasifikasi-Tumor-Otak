@@ -172,7 +172,7 @@ elif menu == "Preprocesing":
             st.error("Dataset `fixdata_bersih` kosong atau tidak ditemukan untuk pembagian data!")
 
 elif menu == "Logistik Regression":
-        st.title("Modelling: Logistic Regression")
+    st.title("Modelling: Logistic Regression")
     if 'X_train' in locals() and 'X_test' in locals():
         # Menambahkan intercept (bias) ke data
         X_train = np.c_[np.ones((X_train.shape[0], 1)), X_train]
