@@ -30,7 +30,7 @@ except FileNotFoundError:
 # Sidebar menu
 menu = st.sidebar.selectbox(
     "Main Menu",
-    options=["Home", "Preprocesing","Logistik Regression", "Random Forest","KNN","Klasifikasi"],
+    options=["Home", "Preprocesing", "Split Data", "Logistik Regression", "Random Forest","KNN","Klasifikasi"],
     index=0
 )
 
@@ -91,258 +91,296 @@ if menu == "Home":
         else:
             st.warning("Gambar distribusi grade tidak tersedia.")
             
-    if menu == "Preprocesing":    
-        st.markdown("## Preprocessing")
-        st.markdown("1. Mendeteksi Missing Value")
-        st.dataframe(cgga_df.isna().sum())
-        st.markdown("2. Normalisasi Data")
-        
-        def min_max_normalize(column):
-            return (column - column.min()) / (column.max() - column.min())
-        
-        # Salin dataset untuk normalisasi
-        normalisasi = cgga_df.copy()
-        
-        # Terapkan normalisasi pada kolom 'Age_at_diagnosis'
-        if 'Age_at_diagnosis' in normalisasi.columns:
-            normalisasi['Age_at_diagnosis'] = min_max_normalize(cgga_df['Age_at_diagnosis'])
-            st.dataframe(normalisasi)
+        if cgga_df is not None:
+            st.dataframe(cgga_df.head())  # Menampilkan sampel dataset
         else:
-            st.warning("Kolom 'Age_at_diagnosis' tidak ditemukan dalam dataset.")
-    
-        # Penanganan outlier
-        st.markdown("3. Outlier")
-        x = normalisasi.drop('Grade', axis=1, errors='ignore')  # Pastikan Grade ada
-        numerical_features = x.select_dtypes(include=['int64', 'float64'])
-    
-        # Terapkan LOF hanya pada fitur numerik
-        lof = LocalOutlierFactor(n_neighbors=10, contamination=0.15)
-        y_outlier = lof.fit_predict(numerical_features)
-    
-        # Skor anomali
-        anomaly_scores = lof.negative_outlier_factor_
-    
-        # Tambahkan hasil prediksi dan skor ke dataset
-        normalisasi['LOF_Prediksi'] = y_outlier
-        normalisasi['LOF_Skor_Anomali'] = anomaly_scores
-    
-        # Hapus data outlier (LOF_Prediksi = -1)
-        data_bersih = normalisasi[normalisasi['LOF_Prediksi'] != -1]
-        data_bersih = data_bersih.drop(['LOF_Prediksi', 'LOF_Skor_Anomali'], axis=1)
-    
-        # Visualisasi Outlier dan Data Bersih
-        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))
-    
-        # Grafik Outlier
-        ax1.scatter(np.arange(len(anomaly_scores)), anomaly_scores, c=y_outlier, cmap='coolwarm', marker='o')
-        ax1.axhline(0, color='black', linestyle='--')
-        ax1.set_title('Grafik Outlier (LOF)')
-        ax1.set_xlabel('Index Data')
-        ax1.set_ylabel('Skor Anomali')
-    
-        # Jumlah Data Bersih
-        data_bersih_count = data_bersih.shape[0]
-        ax2.pie([data_bersih_count, len(normalisasi) - data_bersih_count], labels=['Data Bersih', 'Outlier'], autopct='%1.1f%%', startangle=90)
-        ax2.set_title('Distribusi Data Bersih vs Outlier')
-    
-        # Tampilkan Grafik di Streamlit
-        st.pyplot(fig)
-        st.dataframe(data_bersih)
-    
-        # Split Data
-        X = data_bersih[['Age_at_diagnosis', 'Gender', 'Race', 'IDH1', 'TP53', 'ATRX', 'PTEN', 'EGFR',
-                         'CIC', 'MUC16', 'PIK3CA', 'NF1', 'PIK3R1', 'FUBP1', 'RB1', 'NOTCH1', 'BCOR', 'CSMD3',
-                         'SMARCA4', 'GRIN2A', 'IDH2', 'FAT4', 'PDGFRA']]
-        y = data_bersih['Grade']
-        X_train, X_test, y_train, y_test = ms.train_test_split(X, y, test_size=0.20, random_state=0)
-    
+            st.error("Dataset tidak ditemukan!")
+            
+    elif menu == "Preprocesing":  
+        if cgga_df is not None:
+            st.title("## Preprocessing")
+            st.markdown("1. Mendeteksi Missing Value")
+            st.dataframe(cgga_df.isna().sum())
+            st.markdown("2. Normalisasi Data")
+            
+            def min_max_normalize(column):
+                return (column - column.min()) / (column.max() - column.min())
+            
+            # Salin dataset untuk normalisasi
+            normalisasi = cgga_df.copy()
+            
+            # Terapkan normalisasi pada kolom 'Age_at_diagnosis'
+            if 'Age_at_diagnosis' in normalisasi.columns:
+                normalisasi['Age_at_diagnosis'] = min_max_normalize(cgga_df['Age_at_diagnosis'])
+                st.dataframe(normalisasi)
+            else:
+                st.warning("Kolom 'Age_at_diagnosis' tidak ditemukan dalam dataset.")
+        
+            # Penanganan outlier
+            st.markdown("3. Outlier")
+            x = normalisasi.drop('Grade', axis=1, errors='ignore')  # Pastikan Grade ada
+            numerical_features = x.select_dtypes(include=['int64', 'float64'])
+        
+            # Terapkan LOF hanya pada fitur numerik
+            lof = LocalOutlierFactor(n_neighbors=10, contamination=0.15)
+            y_outlier = lof.fit_predict(numerical_features)
+        
+            # Skor anomali
+            anomaly_scores = lof.negative_outlier_factor_
+        
+            # Tambahkan hasil prediksi dan skor ke dataset
+            normalisasi['LOF_Prediksi'] = y_outlier
+            normalisasi['LOF_Skor_Anomali'] = anomaly_scores
+        
+            # Hapus data outlier (LOF_Prediksi = -1)
+            data_bersih = normalisasi[normalisasi['LOF_Prediksi'] != -1]
+            data_bersih = data_bersih.drop(['LOF_Prediksi', 'LOF_Skor_Anomali'], axis=1)
+        
+            # Visualisasi Outlier dan Data Bersih
+            fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))
+        
+            # Grafik Outlier
+            ax1.scatter(np.arange(len(anomaly_scores)), anomaly_scores, c=y_outlier, cmap='coolwarm', marker='o')
+            ax1.axhline(0, color='black', linestyle='--')
+            ax1.set_title('Grafik Outlier (LOF)')
+            ax1.set_xlabel('Index Data')
+            ax1.set_ylabel('Skor Anomali')
+        
+            # Jumlah Data Bersih
+            data_bersih_count = data_bersih.shape[0]
+            ax2.pie([data_bersih_count, len(normalisasi) - data_bersih_count], labels=['Data Bersih', 'Outlier'], autopct='%1.1f%%', startangle=90)
+            ax2.set_title('Distribusi Data Bersih vs Outlier')
+        
+            # Tampilkan Grafik di Streamlit
+            st.pyplot(fig)
+            st.dataframe(data_bersih)
+        else:
+        st.error("Dataset tidak ditemukan untuk preprocessing!")
 
-
-        st.markdown("## Modelling Logistic Regression")
+    elif menu == "Split Data":
+        st.title("Pembagian Data")
+        if cgga_df is not None:
+            st.markdwon("Split Data 80:20")
+            # Split Data
+            X = data_bersih[['Age_at_diagnosis', 'Gender', 'Race', 'IDH1', 'TP53', 'ATRX', 'PTEN', 'EGFR',
+                             'CIC', 'MUC16', 'PIK3CA', 'NF1', 'PIK3R1', 'FUBP1', 'RB1', 'NOTCH1', 'BCOR', 'CSMD3',
+                             'SMARCA4', 'GRIN2A', 'IDH2', 'FAT4', 'PDGFRA']]
+            y = data['Grade']
+            X_train1, X_test1, y_train1, y_test1 = ms.train_test_split(X, y, test_size=test_size, random_state=0)
+            X_train, X_test, y_train, y_test = ms.train_test_split(X, y, test_size=0.20, random_state=0)
+            st.markdown(f"### Split Data {int((1-test_size)*100)}:{int(test_size*100)}")
+            st.write(f"Jumlah data training: {len(X_train1)}")
+            st.write(f"Jumlah data testing: {len(X_test1)}")
         
-        # Fungsi sigmoid
-        def sigmoid(z):
-            return 1 / (1 + np.exp(-z))
+        # Menampilkan pembagian data dengan berbagai rasio
+        st.title("Pembagian Data Training dan Testing")
+        st.markdown("Berikut adalah jumlah data training dan testing untuk masing-masing split:")
         
-        # Fungsi prediksi probabilitas
-        def predict(X, weights):
-            return sigmoid(np.dot(X, weights))
+        # Split Data 80:20
+        split_and_display(data_bersih, test_size=0.20)
         
-        # Fungsi prediksi label
-        def predict_labels(X, weights, threshold=0.5):
-            probabilities = predict(X, weights)
-            return (probabilities >= threshold).astype(int)
+        # Split Data 90:10
+        split_and_display(data_bersih, test_size=0.10)
         
-        # Fungsi untuk memperbarui bobot
-        def update_weights(X, y, weights, learning_rate):
-            for i in range(len(y)):
-                X_i = X[i]
-                y_pred = predict(X_i, weights)
-                error = y_pred - y[i]
-                weights -= learning_rate * error * X_i
-            return weights
+        # Split Data 70:30
+        split_and_display(data_bersih, test_size=0.30)
+        else:
+            st.error("Dataset tidak ditemukan untuk Pembagian Data!")
         
-        # Logistic regression menggunakan stochastic gradient descent
-        def logistic_regression_sgd(X, y, learning_rate, epochs):
-            np.random.seed(42)
-            weights = np.random.rand(X.shape[1]) * 0.01
-            for epoch in range(epochs):
-                weights = update_weights(X, y, weights, learning_rate)
-            return weights
-        
-        # Fungsi untuk menghitung akurasi
-        def calculate_accuracy(X, y, weights):
-            y_pred = predict_labels(X, weights)
-            accuracy = np.mean(y_pred == y)
-            return accuracy
-        
-        # Memastikan data input ditambahkan bias (intercept)
-        X_train = np.c_[np.ones((X_train.shape[0], 1)), X_train]
-        X_test = np.c_[np.ones((X_test.shape[0], 1)), X_test]
-        y_train = np.ravel(y_train)
-        y_test = np.ravel(y_test)
-        
-        # Pelatihan model
-        learning_rate = 0.1
-        epochs = 50
-        weights = logistic_regression_sgd(X_train, y_train, learning_rate, epochs)
-        
-        # Evaluasi model
-        y_pred_test = predict_labels(X_test, weights)
-        conf_matrix = confusion_matrix(y_test, y_pred_test)
-        train_accuracy = calculate_accuracy(X_train, y_train, weights)
-        
-        # Mengganti label numerik dengan label teks
-        label_mapping = {0: "LGG", 1: "GBM"}
-        y_test_mapped = pd.Series(y_test).map(label_mapping)
-        y_pred_test_mapped = pd.Series(y_pred_test).map(label_mapping)
-        
-        # Menampilkan akurasi
-        st.markdown(f"### Akurasi Model: {train_accuracy * 100:.2f}%")
-        
-        # Menampilkan sampel hasil prediksi
-        st.markdown("### Sampel Data Klasifikasi")
-        classification_results = pd.DataFrame({
-            'True Label': y_test_mapped,
-            'Predicted Label': y_pred_test_mapped
-        })
-        sample_results = classification_results.sample(10)
-        st.dataframe(sample_results)
-        
-        # Menampilkan laporan klasifikasi
-        st.markdown("### Classification Report")
-        report = classification_report(y_test, y_pred_test, target_names=['LGG', 'GBM'], output_dict=True)
-        classification_df = pd.DataFrame(report).transpose()
-        st.dataframe(classification_df)
-        
-        # Menampilkan confusion matrix
-        st.markdown("### Confusion Matrix")
-        plt_lg = plt.figure(figsize=(8, 6))
-        sns.heatmap(conf_matrix, annot=True, fmt='d', cmap='Blues', xticklabels=['LGG', 'GBM'], yticklabels=['LGG', 'GBM'])
-        plt.xlabel('Predicted Labels')
-        plt.ylabel('True Labels')
-        plt.title('Confusion Matrix')
-        st.pyplot(plt_lg)
-
+    elif menu == "Logistik Regression":
+        st.title("Modelling: Logistic Regression")
+        if cgga_df is not None:
+            # Fungsi sigmoid
+            def sigmoid(z):
+                return 1 / (1 + np.exp(-z))
+            
+            # Fungsi prediksi probabilitas
+            def predict(X, weights):
+                return sigmoid(np.dot(X, weights))
+            
+            # Fungsi prediksi label
+            def predict_labels(X, weights, threshold=0.5):
+                probabilities = predict(X, weights)
+                return (probabilities >= threshold).astype(int)
+            
+            # Fungsi untuk memperbarui bobot
+            def update_weights(X, y, weights, learning_rate):
+                for i in range(len(y)):
+                    X_i = X[i]
+                    y_pred = predict(X_i, weights)
+                    error = y_pred - y[i]
+                    weights -= learning_rate * error * X_i
+                return weights
+            
+            # Logistic regression menggunakan stochastic gradient descent
+            def logistic_regression_sgd(X, y, learning_rate, epochs):
+                np.random.seed(42)
+                weights = np.random.rand(X.shape[1]) * 0.01
+                for epoch in range(epochs):
+                    weights = update_weights(X, y, weights, learning_rate)
+                return weights
+            
+            # Fungsi untuk menghitung akurasi
+            def calculate_accuracy(X, y, weights):
+                y_pred = predict_labels(X, weights)
+                accuracy = np.mean(y_pred == y)
+                return accuracy
+            
+            # Memastikan data input ditambahkan bias (intercept)
+            X_train = np.c_[np.ones((X_train.shape[0], 1)), X_train]
+            X_test = np.c_[np.ones((X_test.shape[0], 1)), X_test]
+            y_train = np.ravel(y_train)
+            y_test = np.ravel(y_test)
+            
+            # Pelatihan model
+            learning_rate = 0.1
+            epochs = 50
+            weights = logistic_regression_sgd(X_train, y_train, learning_rate, epochs)
+            
+            # Evaluasi model
+            y_pred_test = predict_labels(X_test, weights)
+            conf_matrix = confusion_matrix(y_test, y_pred_test)
+            train_accuracy = calculate_accuracy(X_train, y_train, weights)
+            
+            # Mengganti label numerik dengan label teks
+            label_mapping = {0: "LGG", 1: "GBM"}
+            y_test_mapped = pd.Series(y_test).map(label_mapping)
+            y_pred_test_mapped = pd.Series(y_pred_test).map(label_mapping)
+            
+            # Menampilkan akurasi
+            st.markdown(f"### Akurasi Model: {train_accuracy * 100:.2f}%")
+            
+            # Menampilkan sampel hasil prediksi
+            st.markdown("### Sampel Data Klasifikasi")
+            classification_results = pd.DataFrame({
+                'True Label': y_test_mapped,
+                'Predicted Label': y_pred_test_mapped
+            })
+            sample_results = classification_results.sample(10)
+            st.dataframe(sample_results)
+            
+            # Menampilkan laporan klasifikasi
+            st.markdown("### Classification Report")
+            report = classification_report(y_test, y_pred_test, target_names=['LGG', 'GBM'], output_dict=True)
+            classification_df = pd.DataFrame(report).transpose()
+            st.dataframe(classification_df)
+            
+            # Menampilkan confusion matrix
+            st.markdown("### Confusion Matrix")
+            plt_lg = plt.figure(figsize=(8, 6))
+            sns.heatmap(conf_matrix, annot=True, fmt='d', cmap='Blues', xticklabels=['LGG', 'GBM'], yticklabels=['LGG', 'GBM'])
+            plt.xlabel('Predicted Labels')
+            plt.ylabel('True Labels')
+            plt.title('Confusion Matrix')
+            st.pyplot(plt_lg)
+        else:
+            st.error("Dataset tidak tersedia untuk model Logistic Regression!")
     
     
     
         # Modelling Random Forest
-        st.markdown("## Modelling Random Forest")
-        model = RandomForestClassifier(
-            n_estimators=100,
-            max_depth=None,
-            min_samples_split=2,
-            max_features=10
-        )
-        model.fit(X_train, y_train)
-        y_pred_randomforest = model.predict(X_test)
-        score_randomforest = model.score(X_test, y_test)
-        conf_matrix_randomforest = confusion_matrix(y_test, y_pred_randomforest)
-        # Ganti label 0 dengan "LGG" dan 1 dengan "GBM"
-        y_test_mapped = pd.Series(y_test).map(label_mapping)
-        y_pred_randomforest_mapped = pd.Series(y_pred_randomforest).map(label_mapping)    
-            # Akurasi
-        st.markdown(f"### Akurasi Model: {score_randomforest * 100:.2f}%")
-        # Menampilkan 10 sampel data klasifikasi dalam tabel
-        classification_randomforest_results = pd.DataFrame({                
-            'True Label': y_test_mapped,
-            'Predicted Label': y_pred_randomforest_mapped
-        })
-        sample_randomforest_results = classification_randomforest_results.sample(10)
-        st.markdown("### Sampel Hasil Prediksi")
-        st.dataframe(sample_randomforest_results)
-    
-        # Classification report
-        report_randomforest = classification_report(y_test, y_pred_randomforest, target_names=['LGG', 'GBM'], output_dict=True)            
-        classification_randomforest_df = pd.DataFrame(report_randomforest).transpose()
-        st.markdown("### Classification Report")
-        st.dataframe(classification_randomforest_df)    
-        
-        # Plot confusion matrix
-        st.markdown("### Confusion Matrix")
-        plt.figure(figsize=(8, 6))
-        sns.heatmap(conf_matrix_randomforest, annot=True, fmt='d', cmap='Blues', xticklabels=['LGG', 'GBM'], yticklabels=['LGG', 'GBM'])
-        plt.xlabel('Predicted Labels')
-        plt.ylabel('True Labels')
-        plt.title('Confusion Matrix (Random Forest)')
-        st.pyplot(plt)
-    
-    
-    
-    
-    
-        st.markdown("## Modelling K-NN")
-    
-        try:
-            # Inisialisasi model K-NN
-            model_knn = KNeighborsClassifier(n_neighbors=10)
-            model_knn.fit(X_train, y_train)
-    
-            # Prediksi dan evaluasi
-            y_pred_knn = model_knn.predict(X_test)
-            score_knn = accuracy_score(y_test, y_pred_knn)
-            conf_matrix_knn = confusion_matrix(y_test, y_pred_knn)
-    
-            # Ganti label 0 dengan "LGG" dan 1 dengan "GBM"
-            label_mapping = {0: "LGG", 1: "GBM"}
-            y_test_mapped = pd.Series(y_test).map(label_mapping)
-            y_pred_knn_mapped = pd.Series(y_pred_knn).map(label_mapping)
-    
-            # Akurasi K-NN
-            st.markdown(f"### Akurasi Model: {score_knn * 100:.2f}%")
-            # Menampilkan 10 sampel data klasifikasi dalam tabel
-            st.markdown("#### Sampel Klasifikasi 10 Data")
-            classification_knn_results = pd.DataFrame({
-                'True Label': y_test_mapped,                    
-                'Predicted Label': y_pred_knn_mapped
-            })
-    
-            # Penyesuaian jumlah sampel untuk dataset kecil
-            if len(classification_knn_results) > 0:
-                sample_knn_results = classification_knn_results.sample(min(10, len(classification_knn_results)))                    
-                st.dataframe(sample_knn_results)  # Menampilkan tabel hasil 10 sampel
+        elif menu == "Random Forest":
+            st.title("Modelling: Random Forest")
+            if cgga_df is not None:
+                model = RandomForestClassifier(
+                    n_estimators=100,
+                    max_depth=None,
+                    min_samples_split=2,
+                    max_features=10
+                )
+                model.fit(X_train, y_train)
+                y_pred_randomforest = model.predict(X_test)
+                score_randomforest = model.score(X_test, y_test)
+                conf_matrix_randomforest = confusion_matrix(y_test, y_pred_randomforest)
+                # Ganti label 0 dengan "LGG" dan 1 dengan "GBM"
+                y_test_mapped = pd.Series(y_test).map(label_mapping)
+                y_pred_randomforest_mapped = pd.Series(y_pred_randomforest).map(label_mapping)    
+                    # Akurasi
+                st.markdown(f"### Akurasi Model: {score_randomforest * 100:.2f}%")
+                # Menampilkan 10 sampel data klasifikasi dalam tabel
+                classification_randomforest_results = pd.DataFrame({                
+                    'True Label': y_test_mapped,
+                    'Predicted Label': y_pred_randomforest_mapped
+                })
+                sample_randomforest_results = classification_randomforest_results.sample(10)
+                st.markdown("### Sampel Hasil Prediksi")
+                st.dataframe(sample_randomforest_results)
+            
+                # Classification report
+                report_randomforest = classification_report(y_test, y_pred_randomforest, target_names=['LGG', 'GBM'], output_dict=True)            
+                classification_randomforest_df = pd.DataFrame(report_randomforest).transpose()
+                st.markdown("### Classification Report")
+                st.dataframe(classification_randomforest_df)    
+                
+                # Plot confusion matrix
+                st.markdown("### Confusion Matrix")
+                plt.figure(figsize=(8, 6))
+                sns.heatmap(conf_matrix_randomforest, annot=True, fmt='d', cmap='Blues', xticklabels=['LGG', 'GBM'], yticklabels=['LGG', 'GBM'])
+                plt.xlabel('Predicted Labels')
+                plt.ylabel('True Labels')
+                plt.title('Confusion Matrix (Random Forest)')
+                st.pyplot(plt)
             else:
-                st.warning("Tidak ada data yang cukup untuk menampilkan sampel klasifikasi.")
+                st.error("Dataset tidak tersedia untuk model Random Forest!")
     
-            # Classification report
-            st.markdown("#### Classification Report")
-            report_knn = classification_report(y_test, y_pred_knn, target_names=['LGG', 'GBM'], output_dict=True)
-            classification_knn_df = pd.DataFrame(report_knn).transpose()
-            st.dataframe(classification_knn_df)  # Menampilkan classification report dalam bentuk tabel
-
-            # Plot confusion matrix
-            st.markdown("#### Confusion Matrix (KNN)")
-            plt_knn = plt.figure(figsize=(8, 6))
-            sns.heatmap(conf_matrix_knn, annot=True, fmt='d', cmap='Blues', xticklabels=['LGG', 'GBM'], yticklabels=['LGG', 'GBM'])
-            plt.xlabel('Predicted Labels')
-            plt.ylabel('True Labels')
-            plt.title('Confusion Matrix (KNN)')
-            st.pyplot(plt_knn)
     
-        except Exception as e:
-            st.error(f"Terjadi kesalahan: {e}")
     
+    
+        elif menu == "KNN":
+            st.title("Modelling: K-Nearest Neighbors")
+            if cgga_df is not None:
+    
+                try:
+                    # Inisialisasi model K-NN
+                    model_knn = KNeighborsClassifier(n_neighbors=10)
+                    model_knn.fit(X_train, y_train)
+            
+                    # Prediksi dan evaluasi
+                    y_pred_knn = model_knn.predict(X_test)
+                    score_knn = accuracy_score(y_test, y_pred_knn)
+                    conf_matrix_knn = confusion_matrix(y_test, y_pred_knn)
+            
+                    # Ganti label 0 dengan "LGG" dan 1 dengan "GBM"
+                    label_mapping = {0: "LGG", 1: "GBM"}
+                    y_test_mapped = pd.Series(y_test).map(label_mapping)
+                    y_pred_knn_mapped = pd.Series(y_pred_knn).map(label_mapping)
+            
+                    # Akurasi K-NN
+                    st.markdown(f"### Akurasi Model: {score_knn * 100:.2f}%")
+                    # Menampilkan 10 sampel data klasifikasi dalam tabel
+                    st.markdown("#### Sampel Klasifikasi 10 Data")
+                    classification_knn_results = pd.DataFrame({
+                        'True Label': y_test_mapped,                    
+                        'Predicted Label': y_pred_knn_mapped
+                    })
+            
+                    # Penyesuaian jumlah sampel untuk dataset kecil
+                    if len(classification_knn_results) > 0:
+                        sample_knn_results = classification_knn_results.sample(min(10, len(classification_knn_results)))                    
+                        st.dataframe(sample_knn_results)  # Menampilkan tabel hasil 10 sampel
+                    else:
+                        st.warning("Tidak ada data yang cukup untuk menampilkan sampel klasifikasi.")
+            
+                    # Classification report
+                    st.markdown("#### Classification Report")
+                    report_knn = classification_report(y_test, y_pred_knn, target_names=['LGG', 'GBM'], output_dict=True)
+                    classification_knn_df = pd.DataFrame(report_knn).transpose()
+                    st.dataframe(classification_knn_df)  # Menampilkan classification report dalam bentuk tabel
+        
+                    # Plot confusion matrix
+                    st.markdown("#### Confusion Matrix (KNN)")
+                    plt_knn = plt.figure(figsize=(8, 6))
+                    sns.heatmap(conf_matrix_knn, annot=True, fmt='d', cmap='Blues', xticklabels=['LGG', 'GBM'], yticklabels=['LGG', 'GBM'])
+                    plt.xlabel('Predicted Labels')
+                    plt.ylabel('True Labels')
+                    plt.title('Confusion Matrix (KNN)')
+                    st.pyplot(plt_knn)
+            
+                except Exception as e:
+                    st.error(f"Terjadi kesalahan: {e}")
+            else:
+                st.error("Dataset tidak tersedia untuk model KNN!")
+            
     
         st.markdown("## Perbandingan 3 Metode")
         
