@@ -161,8 +161,6 @@ elif menu == "Preprocesing":
         else:
             st.error("Dataset fixdata_bersih tidak ditemukan untuk pembagian data!")
             
-
-
 elif menu == "Logistik Regression":
         st.title("Modelling: Logistic Regression")
         # if 'X_train' in locals() and 'X_test' in locals():
@@ -208,53 +206,53 @@ elif menu == "Logistik Regression":
             accuracy = np.mean(y_pred == y)
             return accuracy
             
-            # Memastikan data input ditambahkan bias (intercept)
-            X_train = np.c_[np.ones((X_train.shape[0], 1)), X_train]
-            X_test = np.c_[np.ones((X_test.shape[0], 1)), X_test]
-            y_train = np.ravel(y_train)
-            y_test = np.ravel(y_test)
+        # Memastikan data input ditambahkan bias (intercept)
+        X_train = np.c_[np.ones((X_train.shape[0], 1)), X_train]
+        X_test = np.c_[np.ones((X_test.shape[0], 1)), X_test]
+        y_train = np.ravel(y_train)
+        y_test = np.ravel(y_test)
+        
+        # Pelatihan model
+        learning_rate = 0.1
+        epochs = 50
+        weights = logistic_regression_sgd(X_train, y_train, learning_rate, epochs)
             
-            # Pelatihan model
-            learning_rate = 0.1
-            epochs = 50
-            weights = logistic_regression_sgd(X_train, y_train, learning_rate, epochs)
+        # Evaluasi model
+        y_pred_test = predict_labels(X_test, weights)
+        conf_matrix = confusion_matrix(y_test, y_pred_test)
+        train_accuracy = calculate_accuracy(X_train, y_train, weights)
             
-            # Evaluasi model
-            y_pred_test = predict_labels(X_test, weights)
-            conf_matrix = confusion_matrix(y_test, y_pred_test)
-            train_accuracy = calculate_accuracy(X_train, y_train, weights)
+        # Mengganti label numerik dengan label teks
+        label_mapping = {0: "LGG", 1: "GBM"}
+        y_test_mapped = pd.Series(y_test).map(label_mapping)
+        y_pred_test_mapped = pd.Series(y_pred_test).map(label_mapping)
+        
+        # Menampilkan akurasi
+        st.markdown(f"### Akurasi Model: {train_accuracy * 100:.2f}%")
+        
+        # Menampilkan sampel hasil prediksi
+        st.markdown("### Sampel Data Klasifikasi")
+        classification_results = pd.DataFrame({
+            'True Label': y_test_mapped,
+            'Predicted Label': y_pred_test_mapped
+        })
+        sample_results = classification_results.sample(10)
+        st.dataframe(sample_results)
+        
+        # Menampilkan laporan klasifikasi
+        st.markdown("### Classification Report")
+        report = classification_report(y_test, y_pred_test, target_names=['LGG', 'GBM'], output_dict=True)
+        classification_df = pd.DataFrame(report).transpose()
+        st.dataframe(classification_df)
             
-            # Mengganti label numerik dengan label teks
-            label_mapping = {0: "LGG", 1: "GBM"}
-            y_test_mapped = pd.Series(y_test).map(label_mapping)
-            y_pred_test_mapped = pd.Series(y_pred_test).map(label_mapping)
-            
-            # Menampilkan akurasi
-            st.markdown(f"### Akurasi Model: {train_accuracy * 100:.2f}%")
-            
-            # Menampilkan sampel hasil prediksi
-            st.markdown("### Sampel Data Klasifikasi")
-            classification_results = pd.DataFrame({
-                'True Label': y_test_mapped,
-                'Predicted Label': y_pred_test_mapped
-            })
-            sample_results = classification_results.sample(10)
-            st.dataframe(sample_results)
-            
-            # Menampilkan laporan klasifikasi
-            st.markdown("### Classification Report")
-            report = classification_report(y_test, y_pred_test, target_names=['LGG', 'GBM'], output_dict=True)
-            classification_df = pd.DataFrame(report).transpose()
-            st.dataframe(classification_df)
-            
-            # Menampilkan confusion matrix
-            st.markdown("### Confusion Matrix")
-            plt_lg = plt.figure(figsize=(8, 6))
-            sns.heatmap(conf_matrix, annot=True, fmt='d', cmap='Blues', xticklabels=['LGG', 'GBM'], yticklabels=['LGG', 'GBM'])
-            plt.xlabel('Predicted Labels')
-            plt.ylabel('True Labels')
-            plt.title('Confusion Matrix')
-            st.pyplot(plt_lg)
+        # Menampilkan confusion matrix
+        st.markdown("### Confusion Matrix")
+        plt_lg = plt.figure(figsize=(8, 6))
+        sns.heatmap(conf_matrix, annot=True, fmt='d', cmap='Blues', xticklabels=['LGG', 'GBM'], yticklabels=['LGG', 'GBM'])
+        plt.xlabel('Predicted Labels')
+        plt.ylabel('True Labels')
+        plt.title('Confusion Matrix')
+        st.pyplot(plt_lg)
     # else:
     #         st.error("Dataset tidak tersedia untuk model Logistic Regression!")
     
