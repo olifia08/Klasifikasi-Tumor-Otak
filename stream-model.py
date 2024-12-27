@@ -165,7 +165,7 @@ elif menu == "Preprocesing":
 
 elif menu == "Logistik Regression":
         st.title("Modelling: Logistic Regression")
-         if 'X_train' in locals() and 'X_test' in locals():
+        if 'X_train' in locals() and 'X_test' in locals():
             # Memastikan data input ditambahkan bias (intercept)
             X_train = np.c_[np.ones((X_train.shape[0], 1)), X_train]
             X_test = np.c_[np.ones((X_test.shape[0], 1)), X_test]
