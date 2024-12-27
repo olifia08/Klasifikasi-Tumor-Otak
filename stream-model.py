@@ -255,8 +255,8 @@ elif menu == "Logistik Regression":
             plt.ylabel('True Labels')
             plt.title('Confusion Matrix')
             st.pyplot(plt_lg)
-        else:
-            st.error("Dataset tidak tersedia untuk model Logistic Regression!")
+    # else:
+    #         st.error("Dataset tidak tersedia untuk model Logistic Regression!")
     
     
     
