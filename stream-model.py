@@ -172,18 +172,18 @@ elif menu == "Split Data":
             st.write(f"Jumlah data training: {len(X_train1)}")
             st.write(f"Jumlah data testing: {len(X_test1)}")
         
-        # Menampilkan pembagian data dengan berbagai rasio
-        st.title("Pembagian Data Training dan Testing")
-        st.markdown("Berikut adalah jumlah data training dan testing untuk masing-masing split:")
-        
-        # Split Data 80:20
-        split_and_display(data_bersih, test_size=0.20)
-        
-        # Split Data 90:10
-        split_and_display(data_bersih, test_size=0.10)
-        
-        # Split Data 70:30
-        split_and_display(data_bersih, test_size=0.30)
+            # Menampilkan pembagian data dengan berbagai rasio
+            st.title("Pembagian Data Training dan Testing")
+            st.markdown("Berikut adalah jumlah data training dan testing untuk masing-masing split:")
+            
+            # Split Data 80:20
+            split_and_display(data_bersih, test_size=0.20)
+            
+            # Split Data 90:10
+            split_and_display(data_bersih, test_size=0.10)
+            
+            # Split Data 70:30
+            split_and_display(data_bersih, test_size=0.30)
         else:
             st.error("Dataset tidak ditemukan untuk Pembagian Data!")
         
