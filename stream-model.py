@@ -152,7 +152,7 @@ elif menu == "Preprocesing":
         else:
             st.error("Dataset tidak ditemukan untuk preprocessing!")
         # Split Data
-        if 'data_bersih' in locals() and not fixdata_bersih.empty :
+        if 'data_bersih' in locals() and not data_bersih.empty :
             try:
                 X = data_bersih[['Age_at_diagnosis', 'Gender', 'Race', 'IDH1', 'TP53', 'ATRX', 'PTEN', 'EGFR',
                                     'CIC', 'MUC16', 'PIK3CA', 'NF1', 'PIK3R1', 'FUBP1', 'RB1', 'NOTCH1', 'BCOR', 'CSMD3',
