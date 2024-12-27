@@ -340,7 +340,13 @@ elif menu == "Random Forest":
     
 elif menu == "KNN":
             st.title("Modelling: K-Nearest Neighbors")
-            if cgga_df is not None:
+            # Periksa apakah data split tersedia di session state
+            if 'X_train' in st.session_state and 'X_test' in st.session_state:
+                # Ambil data dari session state
+                X_train = st.session_state['X_train']
+                X_test = st.session_state['X_test']
+                y_train = st.session_state['y_train']
+                y_test = st.session_state['y_test']
     
                 try:
                     # Inisialisasi model K-NN
