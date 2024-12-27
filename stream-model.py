@@ -152,15 +152,15 @@ elif menu == "Preprocesing":
         else:
             st.error("Dataset tidak ditemukan untuk preprocessing!")
             
+
+
+elif menu == "Logistik Regression":
 # Split Data
         X= data_bersih[['Age_at_diagnosis', 'Gender', 'Race','IDH1','TP53','ATRX','PTEN','EGFR',
                         'CIC','MUC16','PIK3CA','NF1','PIK3R1','FUBP1','RB1','NOTCH1','BCOR','CSMD3',
                         'SMARCA4','GRIN2A','IDH2','FAT4','PDGFRA']]
         y= data_bersih.Grade
         X_train, X_test, y_train, y_test = ms.train_test_split(X, y, test_size=0.20, random_state=0)
-
-
-elif menu == "Logistik Regression":
         st.title("Modelling: Logistic Regression")
         if cgga_df is not None:
             # Fungsi sigmoid
