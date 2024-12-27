@@ -152,29 +152,47 @@ elif menu == "Preprocesing":
         else:
             st.error("Dataset tidak ditemukan untuk preprocessing!")
         # Split Data
-        if 'data_bersih' in locals() and not data_bersih.empty :
-            try:
-                X = data_bersih[['Age_at_diagnosis', 'Gender', 'Race', 'IDH1', 'TP53', 'ATRX', 'PTEN', 'EGFR',
-                                    'CIC', 'MUC16', 'PIK3CA', 'NF1', 'PIK3R1', 'FUBP1', 'RB1', 'NOTCH1', 'BCOR', 'CSMD3',
-                                    'SMARCA4', 'GRIN2A', 'IDH2', 'FAT4', 'PDGFRA']]
-                y = data_bersih['Grade']
-                # Split Data
-                X_train, X_test, y_train, y_test = ms.train_test_split(X, y, test_size=0.20, random_state=0)
-                
-                # Logging untuk memastikan data split berhasil
-                st.write(f"X_train shape: {X_train.shape}, X_test shape: {X_test.shape}")
-                st.write(f"y_train shape: {y_train.shape}, y_test shape: {y_test.shape}")
-            except KeyError as e:
-                st.error(f"Terjadi kesalahan saat memilih kolom: {e}")
-            except Exception as e:
-                st.error(f"Kesalahan tidak terduga saat split data: {e}")
-        else:
-            st.error("Dataset `data_bersih` kosong atau tidak ditemukan untuk pembagian data!")
+if 'data_bersih' in st.session_state and not st.session_state['data_bersih'].empty:
+    try:
+        # Pilih fitur dan label
+        data_bersih = st.session_state['data_bersih']
+        X = data_bersih[['Age_at_diagnosis', 'Gender', 'Race', 'IDH1', 'TP53', 'ATRX', 'PTEN', 'EGFR',
+                         'CIC', 'MUC16', 'PIK3CA', 'NF1', 'PIK3R1', 'FUBP1', 'RB1', 'NOTCH1', 'BCOR', 'CSMD3',
+                         'SMARCA4', 'GRIN2A', 'IDH2', 'FAT4', 'PDGFRA']]
+        y = data_bersih['Grade']
 
+        # Split data
+        X_train, X_test, y_train, y_test = ms.train_test_split(X, y, test_size=0.20, random_state=0)
+
+        # Simpan hasil split data ke session state
+        st.session_state['X_train'] = X_train
+        st.session_state['X_test'] = X_test
+        st.session_state['y_train'] = y_train
+        st.session_state['y_test'] = y_test
+
+        # Logging untuk memastikan split berhasil
+        st.write(f"X_train shape: {X_train.shape}, X_test shape: {X_test.shape}")
+        st.write(f"y_train shape: {y_train.shape}, y_test shape: {y_test.shape}")
+    except KeyError as e:
+        st.error(f"Terjadi kesalahan saat memilih kolom: {e}")
+    except Exception as e:
+        st.error(f"Kesalahan tidak terduga saat split data: {e}")
+else:
+    st.error("Dataset `data_bersih` kosong atau tidak ditemukan untuk pembagian data!")
+
+# Logistic Regression
 elif menu == "Logistik Regression":
     st.title("Modelling: Logistic Regression")
-    if 'X_train' in locals() and 'X_test' in locals():
-        # Menambahkan intercept (bias) ke data
+
+    # Periksa apakah data split tersedia di session state
+    if 'X_train' in st.session_state and 'X_test' in st.session_state:
+        # Ambil data dari session state
+        X_train = st.session_state['X_train']
+        X_test = st.session_state['X_test']
+        y_train = st.session_state['y_train']
+        y_test = st.session_state['y_test']
+
+        # Tambahkan intercept (bias) ke data
         X_train = np.c_[np.ones((X_train.shape[0], 1)), X_train]
         X_test = np.c_[np.ones((X_test.shape[0], 1)), X_test]
         y_train = np.ravel(y_train)
