@@ -164,12 +164,12 @@ if 'fixdata_bersih' in locals() and not fixdata_bersih.empty :
         # Logging untuk memastikan data split berhasil
         st.write(f"X_train shape: {X_train.shape}, X_test shape: {X_test.shape}")
         st.write(f"y_train shape: {y_train.shape}, y_test shape: {y_test.shape}")
-        except KeyError as e:
-            st.error(f"Terjadi kesalahan saat memilih kolom: {e}")
-        except Exception as e:
-            st.error(f"Kesalahan tidak terduga saat split data: {e}")
-        else:
-            st.error("Dataset `fixdata_bersih` kosong atau tidak ditemukan untuk pembagian data!")
+    except KeyError as e:
+        st.error(f"Terjadi kesalahan saat memilih kolom: {e}")
+    except Exception as e:
+        st.error(f"Kesalahan tidak terduga saat split data: {e}")
+else:
+    st.error("Dataset `fixdata_bersih` kosong atau tidak ditemukan untuk pembagian data!")
 
             
 elif menu == "Logistik Regression":
