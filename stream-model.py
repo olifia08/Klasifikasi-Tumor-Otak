@@ -30,7 +30,7 @@ except FileNotFoundError:
 # Sidebar menu
 menu = st.sidebar.selectbox(
     "Main Menu",
-    options=["Home", "Preprocesing", "Split Data", "Logistik Regression", "Random Forest","KNN","Klasifikasi","Perbandingan 3 Metode"],
+    options=["Home", "Preprocesing", "Logistik Regression", "Random Forest","KNN","Klasifikasi","Perbandingan 3 Metode"],
     index=0
 )
 
@@ -152,53 +152,13 @@ elif menu == "Preprocesing":
         else:
             st.error("Dataset tidak ditemukan untuk preprocessing!")
             
-def split_and_display(data_bersih, test_size):
-    X = data_bersih[['Age_at_diagnosis', 'Gender', 'Race', 'IDH1', 'TP53', 'ATRX', 'PTEN', 'EGFR',
-                     'CIC', 'MUC16', 'PIK3CA', 'NF1', 'PIK3R1', 'FUBP1', 'RB1', 'NOTCH1', 'BCOR', 'CSMD3',
-                     'SMARCA4', 'GRIN2A', 'IDH2', 'FAT4', 'PDGFRA']]
-    y = data_bersih['Grade']
-    
-    # Splitting the data into train and test sets
-    X_train, X_test, y_train, y_test = ms(X, y, test_size=test_size, random_state=0)
-    
-    # Display the results
-    st.write(f"Jumlah data training: {len(X_train)}")
-    st.write(f"Jumlah data testing: {len(X_test)}")
+# Split Data
+        X= data_bersih[['Age_at_diagnosis', 'Gender', 'Race','IDH1','TP53','ATRX','PTEN','EGFR',
+                        'CIC','MUC16','PIK3CA','NF1','PIK3R1','FUBP1','RB1','NOTCH1','BCOR','CSMD3',
+                        'SMARCA4','GRIN2A','IDH2','FAT4','PDGFRA']]
+        y= data_bersih.Grade
+        X_train, X_test, y_train, y_test = ms.train_test_split(X, y, test_size=0.20, random_state=0)
 
-# Main Streamlit code
-if menu == "Split Data":
-    st.title("Pembagian Data")
-    
-    if 'data_bersih' in locals() and data_bersih is not None:  # Check if data_bersih is loaded
-        st.markdown("Split Data 80:20")
-        
-        # Assuming the columns in 'data_bersih' exist as expected
-        X = data_bersih[['Age_at_diagnosis', 'Gender', 'Race', 'IDH1', 'TP53', 'ATRX', 'PTEN', 'EGFR',
-                         'CIC', 'MUC16', 'PIK3CA', 'NF1', 'PIK3R1', 'FUBP1', 'RB1', 'NOTCH1', 'BCOR', 'CSMD3',
-                         'SMARCA4', 'GRIN2A', 'IDH2', 'FAT4', 'PDGFRA']]
-        y = data_bersih['Grade']
-        
-        X_train1, X_test1, y_train1, y_test1 = ms(X, y, test_size=0.20, random_state=0)
-        
-        st.markdown(f"### Split Data {int((1-0.20)*100)}:{int(0.20*100)}")
-        st.write(f"Jumlah data training: {len(X_train1)}")
-        st.write(f"Jumlah data testing: {len(X_test1)}")
-        
-        # Menampilkan pembagian data dengan berbagai rasio
-        st.title("Pembagian Data Training dan Testing")
-        st.markdown("Berikut adalah jumlah data training dan testing untuk masing-masing split:")
-        
-        # Split Data 80:20
-        split_and_display(data_bersih, test_size=0.20)
-        
-        # Split Data 90:10
-        split_and_display(data_bersih, test_size=0.10)
-        
-        # Split Data 70:30
-        split_and_display(data_bersih, test_size=0.30)
-        
-    else:
-        st.error("Dataset tidak ditemukan untuk Pembagian Data!")
 
 elif menu == "Logistik Regression":
         st.title("Modelling: Logistic Regression")
