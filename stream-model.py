@@ -304,6 +304,7 @@ elif menu == "Random Forest":
                 score_randomforest = model.score(X_test, y_test)
                 conf_matrix_randomforest = confusion_matrix(y_test, y_pred_randomforest)
                 # Ganti label 0 dengan "LGG" dan 1 dengan "GBM"
+                label_mapping = {0: "LGG", 1: "GBM"}
                 y_test_mapped = pd.Series(y_test).map(label_mapping)
                 y_pred_randomforest_mapped = pd.Series(y_pred_randomforest).map(label_mapping)    
                     # Akurasi
