@@ -130,6 +130,7 @@ elif menu == "Preprocesing":
             # Hapus data outlier (LOF_Prediksi = -1)
             data_bersih = normalisasi[normalisasi['LOF_Prediksi'] != -1]
             data_bersih = data_bersih.drop(['LOF_Prediksi', 'LOF_Skor_Anomali'], axis=1)
+             st.session_state['data_bersih'] = data_bersih
         
             # Visualisasi Outlier dan Data Bersih
             fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))
