@@ -285,7 +285,14 @@ elif menu == "Logistik Regression":
         # Modelling Random Forest
 elif menu == "Random Forest":
             st.title("Modelling: Random Forest")
-            if cgga_df is not None:
+            # Periksa apakah data split tersedia di session state
+            if 'X_train' in st.session_state and 'X_test' in st.session_state:
+                # Ambil data dari session state
+                X_train = st.session_state['X_train']
+                X_test = st.session_state['X_test']
+                y_train = st.session_state['y_train']
+                y_test = st.session_state['y_test']
+            # if cgga_df is not None:
                 model = RandomForestClassifier(
                     n_estimators=100,
                     max_depth=None,
