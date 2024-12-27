@@ -160,6 +160,11 @@ elif menu == "Preprocesing":
             X_train, X_test, y_train, y_test = ms.train_test_split(X, y, test_size=0.20, random_state=0)
         else:
             st.error("Dataset fixdata_bersih tidak ditemukan untuk pembagian data!")
+        # Memastikan data input ditambahkan bias (intercept)
+        X_train = np.c_[np.ones((X_train.shape[0], 1)), X_train]
+        X_test = np.c_[np.ones((X_test.shape[0], 1)), X_test]
+        y_train = np.ravel(y_train)
+        y_test = np.ravel(y_test)
             
 elif menu == "Logistik Regression":
         st.title("Modelling: Logistic Regression")
@@ -199,11 +204,7 @@ elif menu == "Logistik Regression":
             accuracy = np.mean(y_pred == y)
             return accuracy
             
-        # Memastikan data input ditambahkan bias (intercept)
-        X_train = np.c_[np.ones((X_train.shape[0], 1)), X_train]
-        X_test = np.c_[np.ones((X_test.shape[0], 1)), X_test]
-        y_train = np.ravel(y_train)
-        y_test = np.ravel(y_test)
+        
         
         # Pelatihan model
         learning_rate = 0.1
