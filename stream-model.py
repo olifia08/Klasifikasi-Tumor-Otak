@@ -25,15 +25,6 @@ try:
 except FileNotFoundError:
     st.error("File model tidak ditemukan. Pastikan path file benar.")
 
-# Split Data
-if 'fixdata_bersih' in locals():
-    X = fixdata_bersih[['Age_at_diagnosis', 'Gender', 'Race', 'IDH1', 'TP53', 'ATRX', 'PTEN', 'EGFR',
-                        'CIC', 'MUC16', 'PIK3CA', 'NF1', 'PIK3R1', 'FUBP1', 'RB1', 'NOTCH1', 'BCOR', 'CSMD3',
-                        'SMARCA4', 'GRIN2A', 'IDH2', 'FAT4', 'PDGFRA']]
-    y = fixdata_bersih['Grade']
-    X_train, X_test, y_train, y_test = ms.train_test_split(X, y, test_size=0.20, random_state=0)
-else:
-    st.error("Dataset fixdata_bersih tidak ditemukan untuk pembagian data!")
     
 
 # Sidebar menu
@@ -165,6 +156,15 @@ elif menu == "Preprocesing":
 
 elif menu == "Logistik Regression":
         st.title("Modelling: Logistic Regression")
+        # Split Data
+        if 'fixdata_bersih' in locals():
+            X = fixdata_bersih[['Age_at_diagnosis', 'Gender', 'Race', 'IDH1', 'TP53', 'ATRX', 'PTEN', 'EGFR',
+                                'CIC', 'MUC16', 'PIK3CA', 'NF1', 'PIK3R1', 'FUBP1', 'RB1', 'NOTCH1', 'BCOR', 'CSMD3',
+                                'SMARCA4', 'GRIN2A', 'IDH2', 'FAT4', 'PDGFRA']]
+            y = fixdata_bersih['Grade']
+            X_train, X_test, y_train, y_test = ms.train_test_split(X, y, test_size=0.20, random_state=0)
+        else:
+            st.error("Dataset fixdata_bersih tidak ditemukan untuk pembagian data!")
         if 'X_train' in locals() and 'X_test' in locals():
             # Memastikan data input ditambahkan bias (intercept)
             X_train = np.c_[np.ones((X_train.shape[0], 1)), X_train]
