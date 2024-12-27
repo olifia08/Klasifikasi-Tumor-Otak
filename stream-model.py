@@ -152,26 +152,25 @@ elif menu == "Preprocesing":
         else:
             st.error("Dataset tidak ditemukan untuk preprocessing!")
         # Split Data
-if 'fixdata_bersih' in locals() and not fixdata_bersih.empty :
-    try:
-        X = fixdata_bersih[['Age_at_diagnosis', 'Gender', 'Race', 'IDH1', 'TP53', 'ATRX', 'PTEN', 'EGFR',
-                            'CIC', 'MUC16', 'PIK3CA', 'NF1', 'PIK3R1', 'FUBP1', 'RB1', 'NOTCH1', 'BCOR', 'CSMD3',
-                            'SMARCA4', 'GRIN2A', 'IDH2', 'FAT4', 'PDGFRA']]
-        y = fixdata_bersih['Grade']
-        # Split Data
-        X_train, X_test, y_train, y_test = ms.train_test_split(X, y, test_size=0.20, random_state=0)
-        
-        # Logging untuk memastikan data split berhasil
-        st.write(f"X_train shape: {X_train.shape}, X_test shape: {X_test.shape}")
-        st.write(f"y_train shape: {y_train.shape}, y_test shape: {y_test.shape}")
-    except KeyError as e:
-        st.error(f"Terjadi kesalahan saat memilih kolom: {e}")
-    except Exception as e:
-        st.error(f"Kesalahan tidak terduga saat split data: {e}")
-else:
-    st.error("Dataset `fixdata_bersih` kosong atau tidak ditemukan untuk pembagian data!")
-
+    if 'fixdata_bersih' in locals() and not fixdata_bersih.empty :
+        try:
+            X = fixdata_bersih[['Age_at_diagnosis', 'Gender', 'Race', 'IDH1', 'TP53', 'ATRX', 'PTEN', 'EGFR',
+                                'CIC', 'MUC16', 'PIK3CA', 'NF1', 'PIK3R1', 'FUBP1', 'RB1', 'NOTCH1', 'BCOR', 'CSMD3',
+                                'SMARCA4', 'GRIN2A', 'IDH2', 'FAT4', 'PDGFRA']]
+            y = fixdata_bersih['Grade']
+            # Split Data
+            X_train, X_test, y_train, y_test = ms.train_test_split(X, y, test_size=0.20, random_state=0)
             
+            # Logging untuk memastikan data split berhasil
+            st.write(f"X_train shape: {X_train.shape}, X_test shape: {X_test.shape}")
+            st.write(f"y_train shape: {y_train.shape}, y_test shape: {y_test.shape}")
+        except KeyError as e:
+            st.error(f"Terjadi kesalahan saat memilih kolom: {e}")
+        except Exception as e:
+            st.error(f"Kesalahan tidak terduga saat split data: {e}")
+    else:
+        st.error("Dataset `fixdata_bersih` kosong atau tidak ditemukan untuk pembagian data!")
+
 elif menu == "Logistik Regression":
         st.title("Modelling: Logistic Regression")
         if 'X_train' in locals() and 'X_test' in locals():
