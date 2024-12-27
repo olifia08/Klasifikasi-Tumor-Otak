@@ -30,7 +30,7 @@ except FileNotFoundError:
 # Sidebar menu
 menu = st.sidebar.selectbox(
     "Main Menu",
-    options=["Home", "Preprocesing", "Split Data", "Logistik Regression", "Random Forest","KNN","Klasifikasi"],
+    options=["Home", "Preprocesing", "Split Data", "Logistik Regression", "Random Forest","KNN","Klasifikasi","Perbandingan 3 Metode"],
     index=0
 )
 
@@ -96,7 +96,7 @@ if menu == "Home":
         else:
             st.error("Dataset tidak ditemukan!")
             
-    elif menu == "Preprocesing":  
+elif menu == "Preprocesing":  
         if cgga_df is not None:
             st.title("## Preprocessing")
             st.markdown("1. Mendeteksi Missing Value")
@@ -157,7 +157,7 @@ if menu == "Home":
         else:
         st.error("Dataset tidak ditemukan untuk preprocessing!")
 
-    elif menu == "Split Data":
+elif menu == "Split Data":
         st.title("Pembagian Data")
         if cgga_df is not None:
             st.markdwon("Split Data 80:20")
@@ -187,7 +187,7 @@ if menu == "Home":
         else:
             st.error("Dataset tidak ditemukan untuk Pembagian Data!")
         
-    elif menu == "Logistik Regression":
+elif menu == "Logistik Regression":
         st.title("Modelling: Logistic Regression")
         if cgga_df is not None:
             # Fungsi sigmoid
@@ -279,7 +279,7 @@ if menu == "Home":
     
     
         # Modelling Random Forest
-        elif menu == "Random Forest":
+elif menu == "Random Forest":
             st.title("Modelling: Random Forest")
             if cgga_df is not None:
                 model = RandomForestClassifier(
@@ -326,7 +326,7 @@ if menu == "Home":
     
     
     
-        elif menu == "KNN":
+elif menu == "KNN":
             st.title("Modelling: K-Nearest Neighbors")
             if cgga_df is not None:
     
@@ -381,8 +381,8 @@ if menu == "Home":
             else:
                 st.error("Dataset tidak tersedia untuk model KNN!")
             
-    
-        st.markdown("## Perbandingan 3 Metode")
+elif menu == "Perbandingan 3 Metode":
+        st.title("Perbandingan 3 Metode")
         
          # Membuat DataFrame untuk menyimpan hasil model
         models = pd.DataFrame({
