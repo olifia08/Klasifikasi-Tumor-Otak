@@ -151,11 +151,6 @@ elif menu == "Preprocesing":
             st.dataframe(data_bersih)
         else:
             st.error("Dataset tidak ditemukan untuk preprocessing!")
-            
-
-
-elif menu == "Logistik Regression":
-        st.title("Modelling: Logistic Regression")
         # Split Data
         if 'fixdata_bersih' in locals():
             X = fixdata_bersih[['Age_at_diagnosis', 'Gender', 'Race', 'IDH1', 'TP53', 'ATRX', 'PTEN', 'EGFR',
@@ -165,6 +160,11 @@ elif menu == "Logistik Regression":
             X_train, X_test, y_train, y_test = ms.train_test_split(X, y, test_size=0.20, random_state=0)
         else:
             st.error("Dataset fixdata_bersih tidak ditemukan untuk pembagian data!")
+            
+
+
+elif menu == "Logistik Regression":
+        st.title("Modelling: Logistic Regression")
         if 'X_train' in locals() and 'X_test' in locals():
             # Memastikan data input ditambahkan bias (intercept)
             X_train = np.c_[np.ones((X_train.shape[0], 1)), X_train]
