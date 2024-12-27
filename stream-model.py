@@ -155,6 +155,7 @@ elif menu == "Preprocesing":
 
 
 elif menu == "Logistik Regression":
+        fixdata_bersih = data_bersih.drop(['LOF_Prediksi', 'LOF_Skor_Anomali'], axis=1)
 # Split Data
         X= fixdata_bersih[['Age_at_diagnosis', 'Gender', 'Race','IDH1','TP53','ATRX','PTEN','EGFR',
                         'CIC','MUC16','PIK3CA','NF1','PIK3R1','FUBP1','RB1','NOTCH1','BCOR','CSMD3',
