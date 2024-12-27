@@ -158,21 +158,21 @@ def split_and_display(data_bersih, test_size):
                      'SMARCA4', 'GRIN2A', 'IDH2', 'FAT4', 'PDGFRA']]
     y = data_bersih['Grade']
     
-    # Splitting the data into train and test sets based on the provided test_size
+    # Splitting the data into train and test sets
     X_train, X_test, y_train, y_test = ms(X, y, test_size=test_size, random_state=0)
     
     # Display the results
     st.write(f"Jumlah data training: {len(X_train)}")
     st.write(f"Jumlah data testing: {len(X_test)}")
-    
 
 # Main Streamlit code
 if menu == "Split Data":
     st.title("Pembagian Data")
     
-    if data_bersih is not None:
-        st.markdown("Split Data 80:20")  # Corrected the typo here
-        # Split Data
+    if 'data_bersih' in locals() and data_bersih is not None:  # Check if data_bersih is loaded
+        st.markdown("Split Data 80:20")
+        
+        # Assuming the columns in 'data_bersih' exist as expected
         X = data_bersih[['Age_at_diagnosis', 'Gender', 'Race', 'IDH1', 'TP53', 'ATRX', 'PTEN', 'EGFR',
                          'CIC', 'MUC16', 'PIK3CA', 'NF1', 'PIK3R1', 'FUBP1', 'RB1', 'NOTCH1', 'BCOR', 'CSMD3',
                          'SMARCA4', 'GRIN2A', 'IDH2', 'FAT4', 'PDGFRA']]
