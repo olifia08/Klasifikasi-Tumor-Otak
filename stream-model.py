@@ -30,7 +30,7 @@ except FileNotFoundError:
 # Sidebar menu
 menu = st.sidebar.selectbox(
     "Main Menu",
-    options=["Home", "Klasifikasi"],
+    options=["Home", "Preprocesing","Logistik Regression", "Random Forest","KNN","Klasifikasi"],
     index=0
 )
 
@@ -90,7 +90,8 @@ if menu == "Home":
                 st.warning(f"Gagal memuat gambar distribusi grade: {e}")
         else:
             st.warning("Gambar distribusi grade tidak tersedia.")
-        
+            
+    if menu == "Preprocesing":    
         st.markdown("## Preprocessing")
         st.markdown("1. Mendeteksi Missing Value")
         st.dataframe(cgga_df.isna().sum())
